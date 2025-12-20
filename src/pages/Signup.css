@@ -1,35 +1,102 @@
-html, body {
+
+html, body, #root {
   margin: 0;
   padding: 0;
   width: 100%;
   height: 100%;
 }
 
-.name-row {
-  display: flex;
-  gap: 12px;
-}
-
-.name-row .input-group {
-  flex: 1;
-}
 * {
   box-sizing: border-box;
-  font-family: "Inter", system-ui, sans-serif;
+  font-family: Inter, system-ui, sans-serif;
 }
 
-.signup-container {
+
+
+
+/* MAIN LAYOUT */
+.signup-layout {
   min-height: 100vh;
-  width: 100vw;
+  width: 100vw;               /* 👈 FORCE FULL WIDTH */
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
   background: linear-gradient(
     180deg,
     #f3e8ff 0%,
-    #ffffff 70%
+    #ffffff 65%
   );
+  overflow-x: hidden;
+}
+
+/* LEFT PANEL */
+.signup-left {
+  padding: 80px;
+}
+
+.signup-left h1 {
+  font-size: 48px;
+  font-weight: 800;
+  margin-bottom: 10px;
+}
+
+
+
+.tagline {
+  font-size: 18px;
+  color: #6b7280;
+  margin-bottom: 40px;
+}
+
+.benefits h3 {
+  margin-bottom: 16px;
+}
+
+.benefits ul {
+  list-style: none;
+  padding: 0;
+}
+
+.benefits li {
+  font-size: 16px;
+  margin-bottom: 14px;
+  padding-left: 28px;
+  position: relative;
+}
+
+.benefits li::before {
+  content: "✓";
+  position: absolute;
+  left: 0;
+  color: #7c3aed;
+  font-weight: bold;
+}
+
+/* RIGHT PANEL */
+.signup-right {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 40px 16px;
+  padding: 40px;
+}
+.welcome-heading {
+  line-height: 1.1;
+  margin-bottom: 20px;
+}
+
+/* "Welcome to" */
+.welcome-text {
+  display: block;
+  font-size: 56px;
+  font-weight: 800;
+  color: #000000;
+}
+
+/* "EngiFlow" */
+.welcome-brand {
+  display: block;
+  font-size: 64px;
+  font-weight: 900;
+  color: #6d4cff; /* brand purple */
 }
 
 
@@ -37,20 +104,21 @@ html, body {
   width: 420px;
   background: white;
   padding: 40px;
-  border-radius: 16px;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.08);
+  border-radius: 18px;
+  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.1);
+}
+
+/* CARD CONTENT */
+.title {
+  font-size: 30px;
+  font-weight: 700;
+  color: #7c3aed;
+  margin-bottom: 6px;
   text-align: center;
 }
 
-
-.title {
-  font-size: 32px;
-  font-weight: 700;
-  color: #7c3aed;
-  margin-bottom: 8px;
-}
-
 .subtitle {
+  text-align: center;
   color: #6b7280;
   margin-bottom: 24px;
 }
@@ -67,24 +135,26 @@ html, body {
   flex: 1;
   padding: 10px;
   border: none;
-  border-radius: 8px;
+  background: transparent;
   cursor: pointer;
-  font-size: 14px;
 }
 
 .tab.active {
   background: white;
+  border-radius: 8px;
   color: #7c3aed;
   font-weight: 600;
 }
 
-.tab.inactive {
-  background: transparent;
-  color: #6b7280;
+/* FORM */
+.name-row {
+  display: flex;
+  gap: 12px;
 }
 
 .input-group {
-  margin-bottom: 16px;
+  margin-bottom: 14px;
+  flex: 1;
 }
 
 .input-group input {
@@ -92,38 +162,86 @@ html, body {
   padding: 14px 16px;
   border-radius: 10px;
   border: 1px solid #e5e7eb;
-  font-size: 14px;
-}
-
-.input-group input:focus {
-  outline: none;
-  border-color: #7c3aed;
 }
 
 .signup-btn {
   width: 100%;
   padding: 14px;
-  margin-top: 10px;
-  background: #7c3aed;
+  margin-top: 12px;
+  background: #4f46e5;
   color: white;
-  font-size: 16px;
   border: none;
   border-radius: 10px;
+  font-size: 16px;
   cursor: pointer;
-  font-weight: 600;
 }
 
 .signup-btn:hover {
-  background: #6d28d9;
+  background: #4338ca;
 }
 
 .terms {
   font-size: 12px;
   color: #6b7280;
-  margin-top: 20px;
+  text-align: center;
+  margin-top: 18px;
 }
 
 .terms span {
   color: #7c3aed;
   cursor: pointer;
+}
+
+/* RESPONSIVE */
+/* =========================
+   MOBILE RESPONSIVE
+   ========================= */
+@media (max-width: 900px) {
+  .signup-layout {
+    grid-template-columns: 1fr;
+  }
+   .welcome-text {
+    font-size: 34px;
+  }
+
+  .welcome-brand {
+    font-size: 40px;
+  }
+
+  /* Keep left section but simplify it */
+  .signup-left {
+    display: block;
+    padding: 40px 24px 16px;
+    text-align: center;
+  }
+
+  /* Show welcome text */
+  .welcome-block h1 {
+    font-size: 32px;
+  }
+
+  .welcome-block p {
+    font-size: 14px;
+    margin-bottom: 8px;
+  }
+
+  /* Hide benefits only */
+  .benefits {
+    display: none;
+  }
+
+  /* Signup card spacing */
+  .signup-right {
+    padding: 16px;
+  }
+
+  .signup-card {
+    width: 100%;
+    max-width: 420px;
+    margin: 0 auto;
+  }
+
+  .name-row {
+    flex-direction: column;
+  }
 }
