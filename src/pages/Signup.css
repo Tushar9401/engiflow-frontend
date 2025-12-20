@@ -29,14 +29,22 @@ html, body, #root {
 }
 
 /* LEFT PANEL */
+/* LEFT PANEL */
 .signup-left {
-  padding: 80px;
+  /* center vertically and give generous space */
+  display: flex;
+  align-items: center;
+  padding: 80px 88px;
+}
+
+.welcome-block {
+  max-width: 620px;
 }
 
 .signup-left h1 {
-  font-size: 48px;
+  font-size: 56px;
   font-weight: 800;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
 }
 
 
@@ -89,14 +97,21 @@ html, body, #root {
   font-size: 56px;
   font-weight: 800;
   color: #000000;
+  line-height: 1.05;
 }
 
 /* "EngiFlow" */
 .welcome-brand {
   display: block;
-  font-size: 64px;
+  font-size: 92px;
   font-weight: 900;
-  color: #6d4cff; /* brand purple */
+  /* gradient brand text */
+  background: linear-gradient(90deg, #6d4cff 0%, #8b5cf6 60%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: 0 6px 20px rgba(109, 76, 255, 0.08);
+  margin-top: 6px;
 }
 
 
