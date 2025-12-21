@@ -252,6 +252,60 @@ export default function Signup() {
             <p className="tagline">
             Your engineering workflow, simplified
             </p>
+            
+            <div className="features">
+              <div className="feature-card">
+                <div className="feature-icon">
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M20 6L9 17l-5-5" stroke="#6d4cff" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </div>
+                <div className="feature-text">
+                  <div className="feature-title">Project Tracking</div>
+                  <div className="feature-desc">Manage projects effortlessly</div>
+                </div>
+              </div>
+
+              <div className="feature-card">
+                <div className="feature-icon">
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M17 21v-2a4 4 0 00-4-4H7a4 4 0 00-4 4v2" stroke="#6d4cff" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+                    <path d="M9 11a4 4 0 110-8 4 4 0 010 8zM21 11a4 4 0 110-8 4 4 0 010 8z" stroke="#6d4cff" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </div>
+                <div className="feature-text">
+                  <div className="feature-title">Team Collab</div>
+                  <div className="feature-desc">Work together in real-time</div>
+                </div>
+              </div>
+
+              <div className="feature-card">
+                <div className="feature-icon">
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M3 12h3l3-9 4 18 3-14 4 9" stroke="#6d4cff" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </div>
+                <div className="feature-text">
+                  <div className="feature-title">Easy RFQs &amp; Quotations</div>
+                  <div className="feature-desc">Create RFQs and manage quotations</div>
+                </div>
+              </div>
+
+              <div className="feature-card">
+                <div className="feature-icon">
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M3 3v18h18" stroke="#6d4cff" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+                    <path d="M7 14V7" stroke="#6d4cff" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+                    <path d="M12 14v-4" stroke="#6d4cff" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+                    <path d="M17 14v-9" stroke="#6d4cff" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </div>
+                <div className="feature-text">
+                  <div className="feature-title">Analytics</div>
+                  <div className="feature-desc">Track your progress</div>
+                </div>
+              </div>
+            </div>
         </div>
 
         {/* <div className="benefits">
