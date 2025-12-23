@@ -1,4 +1,5 @@
 import React from 'react'
+import { useNavigate } from 'react-router-dom'
 import './Dashboard.css'
 
 const stats = [
@@ -14,6 +15,8 @@ const activities = [
 ]
 
 export default function Dashboard() {
+  const navigate = useNavigate()
+
   return (
     <div className="dashboard-page">
       <div className="dashboard-header">
@@ -24,7 +27,7 @@ export default function Dashboard() {
 
         <div className="header-actions">
           <button className="btn primary">+ New Project</button>
-          <button className="btn secondary" onClick={() => { window.location.hash = '/services' }}>View Services</button>
+          <button className="btn secondary" onClick={() => { navigate('/services') }}>View Services</button>
           <button className="btn ghost">Sign Out</button>
         </div>
       </div>
@@ -70,7 +73,7 @@ export default function Dashboard() {
           <div className="summary-card quick-actions-card">
             <h4>Quick Actions</h4>
             <div className="actions-list">
-              <button className="action-btn" onClick={() => { window.location.hash = '/services' }}>
+              <button className="action-btn" onClick={() => { navigate('/services') }}>
                 <span>Request Quotation</span>
                 <span className="arrow">→</span>
               </button>

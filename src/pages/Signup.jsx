@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import { useNavigate, useLocation } from 'react-router-dom'
 import "./Signup.css";
 // import axios from "axios";
 
@@ -212,10 +213,9 @@ export default function Signup() {
     "Zambia",
     "Zimbabwe",
   ];
-  const [activeTab, setActiveTab] = useState(() => {
-    const h = window.location.hash.replace('#', '')
-    return h === '/login' ? 'login' : 'signup'
-  }) // 'signup' | 'login'
+  const navigate = useNavigate()
+  const location = useLocation()
+  const activeTab = location.pathname === '/login' ? 'login' : 'signup'
   const [showForgot, setShowForgot] = useState(false);
 
   const handleChange = (e) => {
@@ -241,17 +241,7 @@ export default function Signup() {
     }
   };
 
-  // keep activeTab synced with the URL hash so external navigation or direct links work
-  useEffect(() => {
-    const onHash = () => {
-      const h = window.location.hash.replace('#', '')
-      setActiveTab(h === '/login' ? 'login' : 'signup')
-    }
-    window.addEventListener('hashchange', onHash)
-    // also run once in case the hash changed before mount
-    onHash()
-    return () => window.removeEventListener('hashchange', onHash)
-  }, [])
+  
 
   return (
     <div className="signup-layout">
@@ -344,14 +334,14 @@ export default function Signup() {
           <div className="tabs">
             <button
               className={"tab " + (activeTab === "login" ? "active" : "inactive")}
-              onClick={() => { window.location.hash = '/login' }}
+              onClick={() => { navigate('/login') }}
               type="button"
             >
               Login
             </button>
             <button
               className={"tab " + (activeTab === "signup" ? "active" : "inactive")}
-              onClick={() => { window.location.hash = '/signup' }}
+              onClick={() => { navigate('/signup') }}
               type="button"
             >
               Sign Up
