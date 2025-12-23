@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./Login.css";
 // import axios from "axios";
 
@@ -22,6 +22,14 @@ export default function Login() {
       alert("Login failed");
     }
   };
+
+  const [route, setRoute] = useState(() => window.location.hash.replace('#', '') || '/login')
+
+  useEffect(() => {
+    const onHash = () => setRoute(window.location.hash.replace('#', '') || '/login')
+    window.addEventListener('hashchange', onHash)
+    return () => window.removeEventListener('hashchange', onHash)
+  }, [])
 
   return (
     <div className="login-layout">
@@ -96,9 +104,9 @@ export default function Login() {
           <p className="subtitle">Enter your credentials to continue</p>
 
           <div className="tabs">
-            <button className="tab active">Login</button>
+            <button className={"tab " + (route === '/login' ? 'active' : 'inactive')}>Login</button>
             <button
-              className="tab inactive"
+              className={"tab " + (route === '/signup' ? 'active' : 'inactive')}
               type="button"
               onClick={() => {
                 // navigate to signup page using hash routing

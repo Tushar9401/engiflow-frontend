@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./Signup.css";
 // import axios from "axios";
 
@@ -7,6 +7,7 @@ export default function Signup() {
     first_name: "",
     last_name: "",
     username: "",
+    user_type: "",
     email: "",
     password: "",
     phone: "",
@@ -211,7 +212,10 @@ export default function Signup() {
     "Zambia",
     "Zimbabwe",
   ];
-  const [activeTab, setActiveTab] = useState("signup"); // 'signup' | 'login'
+  const [activeTab, setActiveTab] = useState(() => {
+    const h = window.location.hash.replace('#', '')
+    return h === '/login' ? 'login' : 'signup'
+  }) // 'signup' | 'login'
   const [showForgot, setShowForgot] = useState(false);
 
   const handleChange = (e) => {
@@ -236,6 +240,18 @@ export default function Signup() {
       }
     }
   };
+
+  // keep activeTab synced with the URL hash so external navigation or direct links work
+  useEffect(() => {
+    const onHash = () => {
+      const h = window.location.hash.replace('#', '')
+      setActiveTab(h === '/login' ? 'login' : 'signup')
+    }
+    window.addEventListener('hashchange', onHash)
+    // also run once in case the hash changed before mount
+    onHash()
+    return () => window.removeEventListener('hashchange', onHash)
+  }, [])
 
   return (
     <div className="signup-layout">
@@ -328,19 +344,24 @@ export default function Signup() {
           <div className="tabs">
             <button
               className={"tab " + (activeTab === "login" ? "active" : "inactive")}
-              onClick={() => setActiveTab("login")}
+              onClick={() => { window.location.hash = '/login' }}
               type="button"
             >
               Login
             </button>
             <button
               className={"tab " + (activeTab === "signup" ? "active" : "inactive")}
-              onClick={() => setActiveTab("signup")}
+              onClick={() => { window.location.hash = '/signup' }}
               type="button"
             >
               Sign Up
             </button>
           </div>
+
+          {/* keep activeTab in sync with URL so deep links and external hash changes reflect the correct tab */}
+          {
+            /* effect-like hook inside render is not allowed, so we add a top-level effect below */
+          }
 
           <form onSubmit={handleSubmit}>
             {activeTab === "signup" ? (
@@ -371,6 +392,19 @@ export default function Signup() {
                     onChange={handleChange}
                     required
                   />
+                </div>
+
+                <div className="input-group">
+                  <select
+                    name="user_type"
+                    value={form.user_type}
+                    onChange={handleChange}
+                    required
+                  >
+                    <option value="">Select user type</option>
+                    <option value="project_manager">Project Manager</option>
+                    <option value="client">Client</option>
+                  </select>
                 </div>
 
                 <div className="input-group">
