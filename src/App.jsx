@@ -1,7 +1,9 @@
 import Signup from './pages/Signup'
 import Login from './pages/Login'
-import Services from './pages/Services'
-import Dashboard from './pages/Dashboard'
+import DashboardLayout from './pages/DashboardLayout'
+import DashboardHome from './pages/DashboardHome'
+import DashboardServicesCivil from './pages/DashboardServicesCivil'
+import DashboardServicesStructural from './pages/DashboardServicesStructural'
 import { Routes, Route, Navigate } from 'react-router-dom'
 import './App.css'
 
@@ -9,8 +11,15 @@ function App() {
   return (
     <Routes>
       <Route path="/signup" element={<Signup />} />
-      <Route path="/services" element={<Services />} />
-      <Route path="/dashboard" element={<Dashboard />} />
+      {/* keep legacy /services redirect to new dashboard civil page */}
+      <Route path="/services" element={<Navigate to="/dashboard/civil" replace />} />
+
+      <Route path="/dashboard/*" element={<DashboardLayout />}>
+        <Route index element={<DashboardHome />} />
+        <Route path="civil" element={<DashboardServicesCivil />} />
+        <Route path="structural" element={<DashboardServicesStructural />} />
+      </Route>
+
       <Route path="/login" element={<Login />} />
       <Route path="/" element={<Navigate to="/login" replace />} />
       <Route path="*" element={<Navigate to="/login" replace />} />
