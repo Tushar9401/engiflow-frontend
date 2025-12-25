@@ -209,7 +209,7 @@ export default function Services() {
             <div className="rfq-box-title">Selected Services:</div>
             <div className="rfq-pills">
               {Array.from(selected).length === 0 && <span className="rfq-empty">No services selected</span>}
-              {Array.from(selected).map((id, i) => {
+              {Array.from(selected).map((id) => {
                 const all = [...civil, ...structural]
                 const found = all.find(x => x.id === id)
                 const label = found ? found.title : id
