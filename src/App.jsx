@@ -20,9 +20,8 @@ function App() {
         <Route path="structural" element={<DashboardServicesStructural />} />
       </Route>
 
-      <Route path="/login" element={<Login />} />
-      <Route path="/" element={<Navigate to="/login" replace />} />
-      <Route path="*" element={<Navigate to="/login" replace />} />
+  <Route path="/" element={<Login />} />
+  <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   )
 }

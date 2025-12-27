@@ -4,6 +4,11 @@ import './Dashboard.css'
 
 export default function DashboardLayout() {
   const navigate = useNavigate()
+  React.useEffect(() => {
+    if (localStorage.getItem('isLoggedIn') !== 'true') {
+      navigate('/', { replace: true });
+    }
+  }, [navigate]);
 
   return (
     <div className="dashboard-layout">
@@ -11,14 +16,16 @@ export default function DashboardLayout() {
         <div className="nav-brand">EngiFlow</div>
         <nav>
           <ul>
-            <li><NavLink to="/dashboard" end className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}>Home</NavLink></li>
               <li><NavLink to="/dashboard" end className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}><span role="img" aria-label="home" style={{marginRight: '8px'}}>🏠</span>Home</NavLink></li>
               <li><NavLink to="/dashboard/civil" className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}><span role="img" aria-label="civil" style={{marginRight: '8px'}}>🏗️</span>Civil Engineering</NavLink></li>
-              <li><NavLink to="/dashboard/structural" className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}><span role="img" aria-label="structural" style={{marginRight: '8px'}}>🏢</span>Structural Engineering</NavLink></li>
+              <li><NavLink to="/dashboard/structural" className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}><span role="img" aria-label="structural" style={{marginRight: '8px'}}>🏢</span>Structural<br/>Engineering</NavLink></li>
           </ul>
         </nav>
         <div className="nav-footer">
-          <button className="btn" onClick={() => navigate('/login')}>Sign Out</button>
+          <button className="btn" onClick={() => {
+            localStorage.removeItem('isLoggedIn');
+            navigate('/', { replace: true });
+          }}>Sign Out</button>
         </div>
       </aside>
 
