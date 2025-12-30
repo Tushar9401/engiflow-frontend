@@ -16,22 +16,29 @@ export default function DashboardLayout() {
         <div className="nav-brand">EngiFlow</div>
         <nav>
           <ul>
-                <li className="dashboard-nav-item dashboard-nav-home topnav-home"><NavLink to="/dashboard" end className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}><span role="img" aria-label="home" style={{marginRight: '8px'}}>🏠</span>Home</NavLink></li>
-              <li style={{marginTop: '2rem'}}>
-                <button className="nav-link" style={{width: '100%', textAlign: 'left', background: 'none', border: 'none', padding: 0, cursor: 'pointer', marginBottom: '18px'}} onClick={() => {/* TODO: Implement action */}}>
-                  <span role="img" aria-label="quote" style={{marginRight: '8px'}}>📝</span>Request Quotation
-                </button>
-              </li>
-              <li>
-                <button className="nav-link" style={{width: '100%', textAlign: 'left', background: 'none', border: 'none', padding: 0, cursor: 'pointer', marginBottom: '18px'}} onClick={() => {/* TODO: Implement action */}}>
-                  <span role="img" aria-label="report" style={{marginRight: '8px'}}>📊</span>View Reports
-                </button>
-              </li>
-              <li>
-                <button className="nav-link" style={{width: '100%', textAlign: 'left', background: 'none', border: 'none', padding: 0, cursor: 'pointer'}} onClick={() => {/* TODO: Implement action */}}>
-                  <span role="img" aria-label="support" style={{marginRight: '8px'}}>💬</span>Contact Support
-                </button>
-              </li>
+                {/* <li className="dashboard-nav-item dashboard-nav-home topnav-home">
+                  <NavLink to="/dashboard" end className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}><span role="img" aria-label="home" style={{marginRight: '8px'}}>🏠</span>Home</NavLink>
+                </li> */}
+                <li className="dashboard-nav-item">
+                  <button className="nav-link" style={{width: '100%', textAlign: 'left', background: 'none', border: 'none', padding: 0, cursor: 'pointer'}} onClick={() => {/* TODO: Implement action */}}>
+                    <span role="img" aria-label="quote" style={{marginRight: '8px'}}>🏠</span>Home
+                  </button>
+                </li>
+                <li className="dashboard-nav-item">
+                  <button className="nav-link" style={{width: '100%', textAlign: 'left', background: 'none', border: 'none', padding: 0, cursor: 'pointer'}} onClick={() => {/* TODO: Implement action */}}>
+                    <span role="img" aria-label="quote" style={{marginRight: '8px'}}>📝</span>Request Quotation
+                  </button>
+                </li>
+                <li className="dashboard-nav-item">
+                  <button className="nav-link" style={{width: '100%', textAlign: 'left', background: 'none', border: 'none', padding: 0, cursor: 'pointer'}} onClick={() => {/* TODO: Implement action */}}>
+                    <span role="img" aria-label="report" style={{marginRight: '8px'}}>📊</span>View Reports
+                  </button>
+                </li>
+                <li className="dashboard-nav-item">
+                  <button className="nav-link" style={{width: '100%', textAlign: 'left', background: 'none', border: 'none', padding: 0, cursor: 'pointer'}} onClick={() => {/* TODO: Implement action */}}>
+                    <span role="img" aria-label="support" style={{marginRight: '8px'}}>💬</span>Contact Support
+                  </button>
+                </li>
           </ul>
         </nav>
         <div className="nav-footer">

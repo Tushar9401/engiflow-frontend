@@ -1,3 +1,12 @@
+/* Add spacing between left panel nav items for desktop view */
+@media (min-width: 901px) {
+  .side-nav nav ul li {
+    margin-bottom: 28px;
+  }
+  .side-nav nav ul li:last-child {
+    margin-bottom: 0;
+  }
+}
 /* Hide icons in top nav for mobile view */
 @media (max-width: 600px) {
   /* Hide icons in top nav for mobile view, but not in cards */
@@ -37,7 +46,12 @@
     max-width: none !important;
     min-width: 0 !important;
     display: flex !important;
-    justify-content: center !important;
+    justify-content: flex-start !important;
+    align-items: center !important;
+    margin-bottom: 32px !important;
+  }
+  .side-nav nav ul li:last-child {
+    margin-bottom: 0 !important;
   }
   .nav-link {
     width: auto !important;
