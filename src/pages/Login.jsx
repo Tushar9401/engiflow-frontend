@@ -27,7 +27,7 @@ export default function Login() {
 
   const navigate = useNavigate()
   const location = useLocation()
-  const route = location.pathname || '/login'
+  const route = location.pathname || '/'
 
   return (
     <div className="login-layout">
@@ -102,7 +102,7 @@ export default function Login() {
           <p className="subtitle">Enter your credentials to continue</p>
 
           <div className="tabs">
-            <button className={"tab " + (route === '/login' ? 'active' : 'inactive')}>Login</button>
+            <button className={"tab " + (route === '/' ? 'active' : 'inactive')}>Login</button>
             <button
               className={"tab " + (route === '/signup' ? 'active' : 'inactive')}
               type="button"

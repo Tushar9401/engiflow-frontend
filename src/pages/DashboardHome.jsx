@@ -54,7 +54,7 @@ export default function DashboardHome() {
             <div className="summary-row"><span>Total Budget</span><strong>$245K</strong></div>
             <div className="summary-row"><span>Completion Rate</span><strong className="success">92%</strong></div>
           </div>
-
+{/* 
           <div className="summary-card quick-actions-card">
             <h4>Quick Actions</h4>
             <div className="actions-list">
@@ -71,7 +71,7 @@ export default function DashboardHome() {
                 <span className="arrow">→</span>
               </button>
             </div>
-          </div>
+          </div> */}
         </aside>
       </section>
     </div>
