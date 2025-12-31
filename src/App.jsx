@@ -1,3 +1,4 @@
+import AdminDashboard from './pages/AdminDashboard';
 import Signup from './pages/Signup'
 import Login from './pages/Login'
 import DashboardLayout from './pages/DashboardLayout'
@@ -21,6 +22,7 @@ function App() {
       </Route>
 
   <Route path="/" element={<Login />} />
+  <Route path="/admin" element={<AdminDashboard />} />
   <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   )
