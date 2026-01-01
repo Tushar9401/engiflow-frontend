@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import './Dashboard.css';
 
@@ -22,6 +22,45 @@ export default function RFQDetail() {
       { name: 'Image 4', url: '#' },
     ],
   };
+
+  // Comment state
+  const [comments, setComments] = useState([
+    { user: 'Admin', text: 'Please review the attached documents.', image: null },
+    { user: 'Project Manager', text: 'Documents received, will update soon.', image: null },
+  ]);
+  const [commentText, setCommentText] = useState('');
+  const [commentFile, setCommentFile] = useState(null);
+  const [commentFileUrl, setCommentFileUrl] = useState(null);
+
+  function handleCommentSubmit(e) {
+    e.preventDefault();
+    if (!commentText && !commentFile) return;
+    setComments([
+      ...comments,
+      {
+        user: 'You',
+        text: commentText,
+        attachment: commentFile
+          ? {
+              name: commentFile.name,
+              url: commentFileUrl,
+              type: commentFile.type
+            }
+          : null
+      }
+    ]);
+    setCommentText('');
+    setCommentFile(null);
+    setCommentFileUrl(null);
+  }
+
+  function handleFileChange(e) {
+    const file = e.target.files[0];
+    if (file) {
+      setCommentFile(file);
+      setCommentFileUrl(URL.createObjectURL(file));
+    }
+  }
 
   return (
     <div className="rfq-detail-layout" style={{ display: 'flex', gap: '32px', padding: '32px 0', minHeight: '100vh', alignItems: 'flex-start' }}>
@@ -91,16 +130,29 @@ export default function RFQDetail() {
           <div style={{background: '#fff', borderRadius: 18, boxShadow: '0 2px 12px 0 rgba(80,80,120,0.06)', padding: '28px 32px'}}>
             <div style={{fontWeight: 700, fontSize: '1.18rem', marginBottom: 18}}>Comments</div>
             <div style={{marginBottom: 18}}>
-              {/* Example comments, replace with dynamic data as needed */}
-              <div style={{marginBottom: 14}}>
-                <span style={{fontWeight: 600, color: '#5b4fff'}}>Admin:</span> Please review the attached documents.
-              </div>
-              <div style={{marginBottom: 14}}>
-                <span style={{fontWeight: 600, color: '#1dbf73'}}>Project Manager:</span> Documents received, will update soon.
-              </div>
+              {comments.map((c, i) => (
+                <div key={i} style={{marginBottom: 14}}>
+                  <span style={{fontWeight: 600, color: c.user === 'Admin' ? '#5b4fff' : c.user === 'Project Manager' ? '#1dbf73' : '#18181b'}}>{c.user}:</span> {c.text}
+                  {c.attachment && c.attachment.type.startsWith('image') && (
+                    <img src={c.attachment.url} alt="comment attachment" style={{marginLeft: 10, maxHeight: 40, borderRadius: 6, verticalAlign: 'middle'}} />
+                  )}
+                  {c.attachment && c.attachment.type === 'application/pdf' && (
+                    <a href={c.attachment.url} target="_blank" rel="noopener noreferrer" style={{marginLeft: 10, color: '#5b4fff', textDecoration: 'underline', fontSize: '0.98em'}}>
+                      <span role="img" aria-label="pdf">📄</span> {c.attachment.name}
+                    </a>
+                  )}
+                </div>
+              ))}
             </div>
-            <form style={{display: 'flex', gap: 12, alignItems: 'flex-end'}}>
-              <textarea placeholder="Add a comment..." style={{flex: 1, borderRadius: 8, border: '1.5px solid #e0e7ff', padding: 12, fontSize: '1.05rem', resize: 'vertical', minHeight: 38}} />
+            <form style={{display: 'flex', gap: 12, alignItems: 'flex-end'}} onSubmit={handleCommentSubmit}>
+              <textarea value={commentText} onChange={e => setCommentText(e.target.value)} placeholder="Add a comment..." style={{flex: 1, borderRadius: 8, border: '1.5px solid #e0e7ff', padding: 12, fontSize: '1.05rem', resize: 'vertical', minHeight: 38}} />
+              <label htmlFor="comment-attach" style={{cursor: 'pointer', display: 'flex', alignItems: 'center', marginRight: 8}} title="Attach file">
+                <svg width="22" height="22" fill="none" xmlns="http://www.w3.org/2000/svg" style={{display: 'block'}}>
+                  <path d="M7.5 12.5L14.5 5.5M14.5 5.5V10.5M14.5 5.5H9.5" stroke="#5b4fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <rect x="3.5" y="3.5" width="15" height="15" rx="4.5" stroke="#5b4fff" strokeWidth="2"/>
+                </svg>
+                <input id="comment-attach" type="file" accept="image/*,application/pdf" onChange={handleFileChange} style={{display: 'none'}} />
+              </label>
               <button type="submit" style={{background: '#5b4fff', color: '#fff', border: 'none', borderRadius: 8, padding: '10px 22px', fontWeight: 600, fontSize: '1.05rem', cursor: 'pointer'}}>Post</button>
             </form>
           </div>
