@@ -5,6 +5,7 @@ import DashboardLayout from './pages/DashboardLayout'
 import DashboardHome from './pages/DashboardHome'
 import DashboardServicesCivil from './pages/DashboardServicesCivil'
 import DashboardServicesStructural from './pages/DashboardServicesStructural'
+import RFQDetail from './pages/RFQDetail';
 import { Routes, Route, Navigate } from 'react-router-dom'
 import './App.css'
 
@@ -23,6 +24,7 @@ function App() {
 
   <Route path="/" element={<Login />} />
   <Route path="/admin" element={<AdminDashboard />} />
+  <Route path="/rfq/:id" element={<RFQDetail />} />
   <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   )

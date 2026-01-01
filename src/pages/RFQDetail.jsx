@@ -1,0 +1,134 @@
+import React from 'react';
+import { useParams } from 'react-router-dom';
+import './Dashboard.css';
+
+export default function RFQDetail() {
+  const { id } = useParams();
+  // Example data, replace with real data or props as needed
+  const rfq = {
+    id,
+    status: 'Pending',
+    title: 'Structural Design',
+    client: 'Acme Corp',
+    date: 'January 1, 2026',
+    budget: '$12,500',
+    priority: 'HIGH',
+    clientStatus: 'VERIFIED',
+    overview: 'Comprehensive structural design for a 10-story commercial building. The project includes earthquake resistance calculations, load-bearing analysis, and detailed material specifications. Need to adhere to international building codes.',
+    attachments: [
+      { name: 'Image 1', url: '#' },
+      { name: 'Image 2', url: '#' },
+      { name: 'Image 3', url: '#' },
+      { name: 'Image 4', url: '#' },
+    ],
+  };
+
+  return (
+    <div className="rfq-detail-layout" style={{ display: 'flex', gap: '32px', padding: '32px 0', minHeight: '100vh', alignItems: 'flex-start' }}>
+      <aside className="side-nav">
+        <div className="nav-brand">EngiFlow</div>
+        <nav>
+          <ul>
+            <li className="dashboard-nav-item">
+              <button className="nav-link" style={{width: '100%', textAlign: 'left', background: 'none', border: 'none', padding: 0, cursor: 'pointer'}}>
+                <span role="img" aria-label="home" style={{marginRight: '8px'}}>🏠</span>Home
+              </button>
+            </li>
+            <li className="dashboard-nav-item">
+              <button className="nav-link" style={{width: '100%', textAlign: 'left', background: 'none', border: 'none', padding: 0, cursor: 'pointer'}}>
+               <span role="img" aria-label="clients" style={{marginRight: '8px'}}>👤</span>Clients
+              </button>
+            </li>
+            <li className="dashboard-nav-item">
+              <button className="nav-link" style={{width: '100%', textAlign: 'left', background: 'none', border: 'none', padding: 0, cursor: 'pointer'}}>
+                 <span role="img" aria-label="rfqs" style={{marginRight: '8px'}}>📄</span>RFQs
+              </button>
+            </li>
+          </ul>
+        </nav>
+      </aside>
+      <div style={{ flex: 2, maxWidth: '800px', margin: '0 auto' }}>
+        <div style={{ marginBottom: '18px', color: '#757575', fontSize: '1rem', display: 'flex', alignItems: 'center', gap: 8 }}>
+          <span style={{ fontSize: '1.1em', cursor: 'pointer' }}>&larr;</span> Back to RFQ Listings
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '10px' }}>
+          <span style={{ background: '#ede9fe', color: '#6366f1', fontWeight: 600, borderRadius: 8, padding: '4px 16px', fontSize: '1.05rem', letterSpacing: 1 }}>{rfq.id}</span>
+          <span style={{ background: '#fff7d6', color: '#bfa100', fontWeight: 600, borderRadius: 8, padding: '4px 14px', fontSize: '1.05rem' }}>{rfq.status}</span>
+        </div>
+        <h1 style={{ fontSize: '2.6rem', fontWeight: 800, margin: '0 0 18px 0' }}>{rfq.title}</h1>
+        <div style={{ display: 'flex', gap: '16px', marginBottom: '24px' }}>
+          <span style={{ background: '#f4f4ff', color: '#5b4fff', borderRadius: 20, padding: '7px 18px', fontWeight: 500, display: 'flex', alignItems: 'center', gap: 8 }}>
+            <span role="img" aria-label="client">👤</span> {rfq.client}
+          </span>
+          <span style={{ background: '#f4f4ff', color: '#5b4fff', borderRadius: 20, padding: '7px 18px', fontWeight: 500, display: 'flex', alignItems: 'center', gap: 8 }}>
+            <span role="img" aria-label="date">📅</span> {rfq.date}
+          </span>
+        </div>
+        <div style={{ background: '#fff', borderRadius: 18, boxShadow: '0 2px 12px 0 rgba(80,80,120,0.06)', padding: '28px 32px', marginBottom: '32px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
+            <span style={{ background: '#ede9fe', color: '#5b4fff', borderRadius: 8, padding: '6px 10px', fontSize: '1.3rem', display: 'flex', alignItems: 'center' }}>📄</span>
+            <span style={{ fontWeight: 700, fontSize: '1.25rem' }}>Project Description</span>
+          </div>
+          <div style={{ color: '#444', fontSize: '1.13rem', lineHeight: 1.7 }}>{rfq.overview}</div>
+        </div>
+        <div style={{ marginBottom: 18 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 10 }}>
+            <span style={{ background: '#ede9fe', color: '#5b4fff', borderRadius: 8, padding: '6px 10px', fontSize: '1.3rem', display: 'flex', alignItems: 'center' }}>🖼️</span>
+            <span style={{ fontWeight: 700, fontSize: '1.15rem' }}>Submitted Image</span>
+            <span style={{ background: '#f4f4ff', color: '#757575', borderRadius: 8, padding: '4px 12px', fontSize: '1rem', marginLeft: 8 }}>{rfq.attachments.length} Attachments</span>
+          </div>
+          <div style={{ display: 'flex', gap: 18, flexWrap: 'wrap' }}>
+            {rfq.attachments.map((doc, i) => (
+              <div key={i} style={{ background: '#f9f9ff', borderRadius: 12, padding: '18px 22px', minWidth: 180, fontSize: '1.05rem', color: '#444', display: 'flex', alignItems: 'center', gap: 8 }}>
+                <img src="/doc-icon.svg" alt="doc" style={{ width: 28, height: 28 }} />
+                {doc.name}
+              </div>
+            ))}
+          </div>
+        </div>
+        {/* Comment Section - place after main content, below images/docs */}
+        <div style={{width: '100%', maxWidth: 800, margin: '48px auto 0 auto'}}>
+          <div style={{background: '#fff', borderRadius: 18, boxShadow: '0 2px 12px 0 rgba(80,80,120,0.06)', padding: '28px 32px'}}>
+            <div style={{fontWeight: 700, fontSize: '1.18rem', marginBottom: 18}}>Comments</div>
+            <div style={{marginBottom: 18}}>
+              {/* Example comments, replace with dynamic data as needed */}
+              <div style={{marginBottom: 14}}>
+                <span style={{fontWeight: 600, color: '#5b4fff'}}>Admin:</span> Please review the attached documents.
+              </div>
+              <div style={{marginBottom: 14}}>
+                <span style={{fontWeight: 600, color: '#1dbf73'}}>Project Manager:</span> Documents received, will update soon.
+              </div>
+            </div>
+            <form style={{display: 'flex', gap: 12, alignItems: 'flex-end'}}>
+              <textarea placeholder="Add a comment..." style={{flex: 1, borderRadius: 8, border: '1.5px solid #e0e7ff', padding: 12, fontSize: '1.05rem', resize: 'vertical', minHeight: 38}} />
+              <button type="submit" style={{background: '#5b4fff', color: '#fff', border: 'none', borderRadius: 8, padding: '10px 22px', fontWeight: 600, fontSize: '1.05rem', cursor: 'pointer'}}>Post</button>
+            </form>
+          </div>
+        </div>
+      </div>
+      <div style={{ flex: 1, maxWidth: 340 }}>
+        <div style={{ background: '#fff', borderRadius: 18, boxShadow: '0 2px 12px 0 rgba(80,80,120,0.06)', padding: '32px 28px', marginBottom: 18 }}>
+          <div style={{ fontWeight: 700, fontSize: '1.25rem', marginBottom: 18 }}>Assign RFQ</div>
+          <div style={{ marginBottom: 24 }}>
+            <label style={{ fontWeight: 500, color: '#757575', fontSize: '1.08rem', display: 'block', marginBottom: 8 }}>Assign to Project Manager:</label>
+            <select style={{ width: '100%', padding: '10px', borderRadius: 8, border: '1.5px solid #e0e7ff', fontSize: '1.05rem', marginBottom: 12 }}>
+              <option>Select Project Manager</option>
+              <option>John Doe</option>
+              <option>Jane Smith</option>
+            </select>
+            <button style={{ background: '#5b4fff', color: '#fff', border: 'none', borderRadius: 8, padding: '10px 0', fontWeight: 600, fontSize: '1.05rem', cursor: 'pointer', width: '100%' }}>Assign to Project Manager</button>
+          </div>
+          {/* <div style={{ marginBottom: 0 }}>
+            <label style={{ fontWeight: 500, color: '#757575', fontSize: '1.08rem', display: 'block', marginBottom: 8 }}>Assign to Sub Contractor:</label>
+            <select style={{ width: '100%', padding: '10px', borderRadius: 8, border: '1.5px solid #e0e7ff', fontSize: '1.05rem', marginBottom: 12 }}>
+              <option>Select Sub Contractor</option>
+              <option>ABC Constructions</option>
+              <option>XYZ Subcontractors</option>
+            </select>
+            <button style={{ background: '#5b4fff', color: '#fff', border: 'none', borderRadius: 8, padding: '10px 0', fontWeight: 600, fontSize: '1.05rem', cursor: 'pointer', width: '100%' }}>Assign to Sub Contractor</button>
+          </div> */}
+        </div>
+      </div>
+    </div>
+  );
+}
