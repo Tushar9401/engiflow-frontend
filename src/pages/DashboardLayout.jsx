@@ -1,8 +1,36 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { NavLink, Outlet, useNavigate } from 'react-router-dom'
 import './Dashboard.css'
 
 export default function DashboardLayout() {
+  const [showRFQModal, setShowRFQModal] = useState(false);
+  const [rfqTitle, setRfqTitle] = useState('');
+  const [rfqDescription, setRfqDescription] = useState('');
+  const [rfqFiles, setRfqFiles] = useState(null);
+  const [rfqCloseDate, setRfqCloseDate] = useState('');
+
+  function openRFQModal() {
+    setShowRFQModal(true);
+  }
+
+  function closeRFQModal() {
+    setShowRFQModal(false);
+    setRfqTitle('');
+    setRfqDescription('');
+    setRfqFiles(null);
+    setRfqCloseDate('');
+  }
+
+  function handleRFQSubmit(e) {
+    e.preventDefault();
+    // For now just close the modal. Replace with API call as needed.
+    console.log('Submitting RFQ', { title: rfqTitle, description: rfqDescription, closeDate: rfqCloseDate, files: rfqFiles });
+    closeRFQModal();
+  }
+
+  function handleFilesChange(e) {
+    setRfqFiles(e.target.files);
+  }
   const navigate = useNavigate()
   React.useEffect(() => {
     if (localStorage.getItem('isLoggedIn') !== 'true') {
@@ -25,7 +53,7 @@ export default function DashboardLayout() {
                   </button>
                 </li>
                 <li className="dashboard-nav-item">
-                  <button className="nav-link" style={{width: '100%', textAlign: 'left', background: 'none', border: 'none', padding: 0, cursor: 'pointer'}} onClick={() => {/* TODO: Implement action */}}>
+                  <button className="nav-link" style={{width: '100%', textAlign: 'left', background: 'none', border: 'none', padding: 0, cursor: 'pointer'}} onClick={openRFQModal}>
                     <span role="img" aria-label="quote" style={{marginRight: '8px'}}>📝</span>Request Quotation
                   </button>
                 </li>
@@ -66,6 +94,48 @@ export default function DashboardLayout() {
           <Outlet />
         </div>
       </main>
+
+      {showRFQModal && (
+        <div style={{position: 'fixed', inset: 0, background: 'rgba(15, 23, 42, 0.45)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999}}>
+          <div style={{width: '92%', maxWidth: 1100, background: '#fff', borderRadius: 14, padding: 28, boxShadow: '0 20px 60px rgba(15,23,42,0.25)'}}>
+            <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 18}}>
+              <h2 style={{margin: 0, color: '#4f46e5'}}>Request for Quotation</h2>
+              <button onClick={closeRFQModal} style={{background: 'transparent', border: 'none', fontSize: 20, cursor: 'pointer'}}>✕</button>
+            </div>
+
+            <form onSubmit={handleRFQSubmit}>
+              {/* Title */}
+              <div style={{marginBottom: 18}}>
+                <label style={{display: 'block', fontWeight: 600, color: '#4c1d95', marginBottom: 8}}>Title</label>
+                <input value={rfqTitle} onChange={e => setRfqTitle(e.target.value)} type="text" placeholder="Title" style={{width: '100%', padding: '14px', borderRadius: 10, border: '1.5px solid #e6e9ff', fontSize: '1rem'}} />
+              </div>
+
+              {/* Description */}
+              <div style={{marginBottom: 18}}>
+                <label style={{display: 'block', fontWeight: 600, color: '#4c1d95', marginBottom: 8}}>Description</label>
+                <textarea value={rfqDescription} onChange={e => setRfqDescription(e.target.value)} placeholder="Description" style={{width: '100%', padding: '14px', borderRadius: 10, border: '1.5px solid #e6e9ff', fontSize: '1rem', minHeight: 120}} />
+              </div>
+
+              {/* Expected Close Date */}
+              <div style={{marginBottom: 18}}>
+                <label style={{display: 'block', fontWeight: 600, color: '#4c1d95', marginBottom: 8}}>End Date</label>
+                <input type="date" value={rfqCloseDate} onChange={e => setRfqCloseDate(e.target.value)} style={{width: '100%', padding: '12px', borderRadius: 10, border: '1.5px solid #e6e9ff', fontSize: '1rem'}} />
+              </div>
+
+              {/* Images / Files */}
+              <div style={{marginBottom: 24}}>
+                <label style={{display: 'block', fontWeight: 600, color: '#4c1d95', marginBottom: 8}}>Attachments</label>
+                <input type="file" accept="image/*,application/pdf" onChange={handleFilesChange} multiple style={{width: '100%', padding: '12px', borderRadius: 8, border: '1.5px solid #e6e9ff', background: '#fafbff'}} />
+              </div>
+
+              <div style={{display: 'flex', justifyContent: 'flex-end', gap: 12}}>
+                <button type="button" onClick={closeRFQModal} className="btn" style={{background: '#eef2ff', color: '#4c1d95'}}>Cancel</button>
+                <button type="submit" className="btn primary">Submit</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

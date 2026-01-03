@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import './Dashboard.css';
 
 export default function RFQDetail() {
@@ -11,6 +11,7 @@ export default function RFQDetail() {
     title: 'Structural Design',
     client: 'Acme Corp',
     date: 'January 1, 2026',
+    end_date: 'January 1, 2026',
     budget: '$12,500',
     priority: 'HIGH',
     clientStatus: 'VERIFIED',
@@ -62,15 +63,35 @@ export default function RFQDetail() {
     }
   }
 
-  return (
-    <div className="rfq-detail-layout" style={{ display: 'flex', gap: '32px', padding: '32px 0', minHeight: '100vh', alignItems: 'flex-start' }}>
+  const location = useLocation();
+  const navigate = useNavigate();
+  const params = new URLSearchParams(location.search);
+  // With HashRouter the query may live inside the hash (e.g. #/rfq/id?panel=dashboard).
+  // Parse the hash as a fallback so panel is detected correctly on direct loads/refresh.
+  const hashParams = (() => {
+    try {
+      const h = window && window.location && window.location.hash;
+      if (!h) return null;
+      const qi = h.indexOf('?');
+      if (qi === -1) return null;
+      return new URLSearchParams(h.substring(qi));
+    } catch (e) {
+      return null;
+    }
+  })();
+  const panel = (location && location.state && location.state.panel)
+    ? location.state.panel
+    : (params.get('panel') || (hashParams && hashParams.get('panel')) || 'dashboard');
+
+  function renderAdminSidebar() {
+    return (
       <aside className="side-nav">
         <div className="nav-brand">EngiFlow</div>
         <nav>
           <ul>
             <li className="dashboard-nav-item">
               <button className="nav-link" style={{width: '100%', textAlign: 'left', background: 'none', border: 'none', padding: 0, cursor: 'pointer'}}>
-                <span role="img" aria-label="home" style={{marginRight: '8px'}}>🏠</span>Home
+                <span role="img" aria-label="dashboard" style={{marginRight: '8px'}}>📊</span>Home
               </button>
             </li>
             <li className="dashboard-nav-item">
@@ -86,21 +107,72 @@ export default function RFQDetail() {
           </ul>
         </nav>
       </aside>
-      <div style={{ flex: 2, maxWidth: '800px', margin: '0 auto' }}>
+    );
+  }
+
+  function renderDashboardSidebar() {
+    return (
+      <aside className="side-nav">
+        <div className="nav-brand">EngiFlow</div>
+        <nav>
+          <ul>
+            <li className="dashboard-nav-item">
+              <button className="nav-link" style={{width: '100%', textAlign: 'left', background: 'none', border: 'none', padding: 0, cursor: 'pointer'}}>
+                <span role="img" aria-label="home" style={{marginRight: '8px'}}>🏠</span>Home
+              </button>
+            </li>
+            <li className="dashboard-nav-item">
+              <button className="nav-link" style={{width: '100%', textAlign: 'left', background: 'none', border: 'none', padding: 0, cursor: 'pointer'}}>
+               <span role="img" aria-label="clients" style={{marginRight: '8px'}}>📝</span>Request Quotation
+              </button>
+            </li>
+            <li className="dashboard-nav-item">
+              <button className="nav-link" style={{width: '100%', textAlign: 'left', background: 'none', border: 'none', padding: 0, cursor: 'pointer'}}>
+                 <span role="img" aria-label="rfqs" style={{marginRight: '8px'}}>📊</span>View Reports
+              </button>
+            </li>
+            <li className="dashboard-nav-item">
+                  <button className="nav-link" style={{width: '100%', textAlign: 'left', background: 'none', border: 'none', padding: 0, cursor: 'pointer'}} onClick={() => {/* TODO: Implement action */}}>
+                    <span role="img" aria-label="support" style={{marginRight: '8px'}}>💬</span>Contact Support
+                  </button>
+            </li>
+          </ul>
+        </nav>
+      </aside>
+    );
+  }
+
+  return (
+    <div className="rfq-detail-layout" style={{ display: 'flex', gap: '32px', padding: '32px 0', minHeight: '100vh', alignItems: 'flex-start' }}>
+      {panel === 'admin' ? renderAdminSidebar() : renderDashboardSidebar()}
+  <div style={{ flex: 2, maxWidth: '900px', margin: '0' }}>
         <div style={{ marginBottom: '18px', color: '#757575', fontSize: '1rem', display: 'flex', alignItems: 'center', gap: 8 }}>
-          <span style={{ fontSize: '1.1em', cursor: 'pointer' }}>&larr;</span> Back to RFQ Listings
+          <span style={{ fontSize: '1.1em', cursor: 'pointer' }} onClick={() => navigate(`/admin/rfqs?panel=${panel}`, { state: { panel } })}>&larr;</span> Back to RFQ Listings
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '10px' }}>
           <span style={{ background: '#ede9fe', color: '#6366f1', fontWeight: 600, borderRadius: 8, padding: '4px 16px', fontSize: '1.05rem', letterSpacing: 1 }}>{rfq.id}</span>
           <span style={{ background: '#fff7d6', color: '#bfa100', fontWeight: 600, borderRadius: 8, padding: '4px 14px', fontSize: '1.05rem' }}>{rfq.status}</span>
         </div>
         <h1 style={{ fontSize: '2.6rem', fontWeight: 800, margin: '0 0 18px 0' }}>{rfq.title}</h1>
-        <div style={{ display: 'flex', gap: '16px', marginBottom: '24px' }}>
+        <div style={{ display: 'flex', gap: '16px', marginBottom: '24px', alignItems: 'center' }}>
           <span style={{ background: '#f4f4ff', color: '#5b4fff', borderRadius: 20, padding: '7px 18px', fontWeight: 500, display: 'flex', alignItems: 'center', gap: 8 }}>
             <span role="img" aria-label="client">👤</span> {rfq.client}
           </span>
-          <span style={{ background: '#f4f4ff', color: '#5b4fff', borderRadius: 20, padding: '7px 18px', fontWeight: 500, display: 'flex', alignItems: 'center', gap: 8 }}>
-            <span role="img" aria-label="date">📅</span> {rfq.date}
+
+          <span style={{ background: '#f4f4ff', color: '#5b4fff', borderRadius: 14, padding: '8px 12px', fontWeight: 500, display: 'flex', flexDirection: 'column', gap: 4 }}>
+            <span style={{ fontSize: '0.78rem', color: '#6b7280', fontWeight: 600, letterSpacing: 0.2 }}>Submitted Date</span>
+            <span style={{ fontSize: '0.98rem', color: '#5b4fff', display: 'flex', alignItems: 'center', gap: 8 }}>
+              <span role="img" aria-label="submitted-date">📅</span>
+              {rfq.date}
+            </span>
+          </span>
+
+          <span style={{ background: '#fff7f0', color: '#b85b00', borderRadius: 14, padding: '8px 12px', fontWeight: 600, display: 'flex', flexDirection: 'column', gap: 4 }}>
+            <span style={{ fontSize: '0.78rem', color: '#9a7a60', fontWeight: 600, letterSpacing: 0.2 }}>End Date</span>
+            <span style={{ fontSize: '0.98rem', color: '#b85b00', display: 'flex', alignItems: 'center', gap: 8 }}>
+              <span role="img" aria-label="end-date">⏳</span>
+              {rfq.end_date}
+            </span>
           </span>
         </div>
         <div style={{ background: '#fff', borderRadius: 18, boxShadow: '0 2px 12px 0 rgba(80,80,120,0.06)', padding: '28px 32px', marginBottom: '32px' }}>
@@ -168,6 +240,7 @@ export default function RFQDetail() {
               <option>John Doe</option>
               <option>Jane Smith</option>
             </select>
+            
             <button style={{ background: '#5b4fff', color: '#fff', border: 'none', borderRadius: 8, padding: '10px 0', fontWeight: 600, fontSize: '1.05rem', cursor: 'pointer', width: '100%' }}>Assign to Project Manager</button>
           </div>
           {/* <div style={{ marginBottom: 0 }}>

@@ -1,4 +1,5 @@
 import React from 'react'
+import { useNavigate } from 'react-router-dom'
 import './Dashboard.css'
 
 const stats = [
@@ -14,11 +15,19 @@ const activities = [
 ]
 
 export default function DashboardHome() {
+  const navigate = useNavigate()
   return (
     <div className="dashboard-content">
       <section className="stats-grid">
         {stats.map((s, i) => (
-          <div className="stat-card" key={i}>
+          <div
+            className="stat-card"
+            key={i}
+            onClick={() => {
+              if (s.title === 'Active RFQs') navigate('/admin/rfqs?panel=dashboard', { state: { panel: 'dashboard' } })
+            }}
+            style={{ cursor: s.title === 'Active RFQs' ? 'pointer' : 'default' }}
+          >
             <div className="stat-icon">{s.icon}</div>
             <div className="stat-body">
               <div className="stat-note">{s.note}</div>

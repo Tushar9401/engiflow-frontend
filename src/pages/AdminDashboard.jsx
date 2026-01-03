@@ -1,6 +1,7 @@
 import React from 'react';
 import './AdminDashboard.css';
 import './Dashboard.css';
+import { useNavigate } from 'react-router-dom';
 
 const stats = [
   {
@@ -32,7 +33,7 @@ const submissions = [
     client: 'Acme Corp',
     service: 'Structural Design',
     date: '2024-12-30',
-    // amount: '$12,500',
+    end_date: '2026-01-01',
     // status: 'Pending',
     // statusClass: 'pending',
   },
@@ -41,7 +42,7 @@ const submissions = [
     client: 'Global Build',
     service: 'Civil Works',
     date: '2024-12-29',
-    // amount: '$8,200',
+    end_date: '2026-01-01',
     // status: 'Reviewed',
     // statusClass: 'reviewed',
   },
@@ -50,13 +51,14 @@ const submissions = [
     client: 'Tech Infra',
     service: 'Site Investigation and concreate testing',
     date: '2024-12-28',
-    amount: '$15,000',
+    end_date: '2026-01-01',
     // status: 'Approved',
     // statusClass: 'approved',
   },
 ];
 
 export default function AdminDashboard() {
+  const navigate = useNavigate();
   return (
     <div className="dashboard-layout">
       <aside className="side-nav">
@@ -74,7 +76,11 @@ export default function AdminDashboard() {
               </button>
             </li>
             <li className="dashboard-nav-item">
-              <button className="nav-link" style={{width: '100%', textAlign: 'left', background: 'none', border: 'none', padding: 0, cursor: 'pointer'}}>
+              <button
+                className="nav-link"
+                style={{width: '100%', textAlign: 'left', background: 'none', border: 'none', padding: 0, cursor: 'pointer'}}
+                onClick={() => navigate('/admin/rfqs?panel=admin', { state: { panel: 'admin' } })}
+              >
                 <span role="img" aria-label="rfqs" style={{marginRight: '8px'}}>📄</span>RFQs
               </button>
             </li>
@@ -93,7 +99,15 @@ export default function AdminDashboard() {
         </header>
         <section className="admin-stats">
           {stats.map((stat, idx) => (
-            <div className="admin-stat-card" key={idx}>
+            <div
+              className="admin-stat-card"
+              key={idx}
+              onClick={() => {
+                // navigate to Active RFQs listing when that card is clicked
+                      if (stat.label === 'Active RFQs') navigate('/admin/rfqs?panel=admin', { state: { panel: 'admin' } });
+              }}
+              style={{ cursor: stat.label === 'Active RFQs' ? 'pointer' : 'default' }}
+            >
               <div className="admin-stat-row" style={{justifyContent: 'center'}}>
                 <span className="admin-stat-icon">{stat.icon}</span>
                 <span className="admin-stat-label">{stat.label}</span>
@@ -118,7 +132,8 @@ export default function AdminDashboard() {
                 <th>ID</th>
                 <th>Client</th>
                 <th>Description</th>
-                <th>Date</th>
+                <th>Submitted Date</th>
+                <th>End Date</th>
                 {/* <th>Amount</th> */}
                 {/* <th>Status</th>
                 <th>Actions</th> */}
@@ -131,6 +146,7 @@ export default function AdminDashboard() {
                   <td><b>{row.client}</b></td>
                   <td>{row.service.length > 25 ? row.service.slice(0, 22) + '...' : row.service}</td>
                   <td>{row.date}</td>
+                  <td>{row.end_date}</td>
                   {/* <td>{row.amount}</td> */}
                   {/* <td><span className={`admin-status ${row.statusClass}`}>{row.status}</span></td> */}
                   {/* <td><button className="admin-table-actions">&#8942;</button></td> */}
