@@ -3,28 +3,24 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './AdminDashboard.css';
 import './Dashboard.css';
-// import { useNavigate } from 'react-router-dom';
 
 const stats = [
   {
-    icon: '👤',
-    label: 'Total Clients',
-    value: '1,284',
-    // change: '+12.5%',
+    icon: '👥',
+    label: 'Assigned RFQs',
+    value: '42',
     changeType: 'up',
   },
   {
     icon: '📄',
     label: 'Active RFQs',
-    value: '156',
-    // change: '+8.2%',
+    value: '28',
     changeType: 'up',
   },
   {
     icon: '✔️',
     label: 'Completed',
-    value: '892',
-    // change: '+14.3%',
+    value: '198',
     changeType: 'up',
   },
 ];
@@ -36,8 +32,6 @@ const submissions = [
     service: 'Structural Design',
     date: '2024-12-30',
     end_date: '2026-01-01',
-    // status: 'Pending',
-    // statusClass: 'pending',
   },
   {
     id: 'RFQ-2024-002',
@@ -45,29 +39,26 @@ const submissions = [
     service: 'Civil Works',
     date: '2024-12-29',
     end_date: '2026-01-01',
-    // status: 'Reviewed',
-    // statusClass: 'reviewed',
   },
   {
     id: 'RFQ-2024-003',
     client: 'Tech Infra',
-    service: 'Site Investigation and concreate testing',
+    service: 'Site Investigation and concrete testing',
     date: '2024-12-28',
     end_date: '2026-01-01',
-    // status: 'Approved',
-    // statusClass: 'approved',
   },
 ];
 
-export default function AdminDashboard() {
+export default function PMDashboard() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // If not logged in, redirect to login. This prevents access via browser Back after sign-out.
+    // Prevent access via browser Back after sign-out
     if (localStorage.getItem('isLoggedIn') !== 'true') {
       navigate('/', { replace: true });
     }
   }, [navigate]);
+
   return (
     <div className="dashboard-layout">
       <aside className="side-nav">
@@ -85,19 +76,10 @@ export default function AdminDashboard() {
               </button>
             </li>
             <li className="dashboard-nav-item">
-              <button
-                className="nav-link"
-                style={{width: '100%', textAlign: 'left', background: 'none', border: 'none', padding: 0, cursor: 'pointer'}}
-                onClick={() => navigate('/admin/rfqs?panel=admin', { state: { panel: 'admin' } })}
-              >
+              <button className="nav-link" style={{width: '100%', textAlign: 'left', background: 'none', border: 'none', padding: 0, cursor: 'pointer'}} onClick={() => navigate('/admin/rfqs?panel=admin', { state: { panel: 'admin' } })}>
                 <span role="img" aria-label="rfqs" style={{marginRight: '8px'}}>📄</span>RFQs
               </button>
             </li>
-            {/* <li className="dashboard-nav-item">
-              <button className="nav-link" style={{width: '100%', textAlign: 'left', background: 'none', border: 'none', padding: 0, cursor: 'pointer'}}>
-                <span role="img" aria-label="settings" style={{marginRight: '8px'}}>⚙️</span>Settings
-              </button>
-            </li> */}
           </ul>
         </nav>
         <div className="nav-footer">
@@ -109,8 +91,8 @@ export default function AdminDashboard() {
       </aside>
       <main className="dashboard-main">
         <header className="admin-header">
-          <h1><span className="admin-bold">Admin</span> <span className="admin-accent">Console</span></h1>
-          <p className="admin-lead">Manage and track service requests and RFQs</p>
+          <h1><span className="admin-bold">Project Manager</span> <span className="admin-accent">Console</span></h1>
+          <p className="admin-lead">Manage and track assigned RFQs and tasks</p>
         </header>
         <section className="admin-stats">
           {stats.map((stat, idx) => (
@@ -118,8 +100,7 @@ export default function AdminDashboard() {
               className="admin-stat-card"
               key={idx}
               onClick={() => {
-                // navigate to Active RFQs listing when that card is clicked
-                      if (stat.label === 'Active RFQs') navigate('/admin/rfqs?panel=admin', { state: { panel: 'admin' } });
+                if (stat.label === 'Active RFQs') navigate('/admin/rfqs?panel=admin', { state: { panel: 'admin' } })
               }}
               style={{ cursor: stat.label === 'Active RFQs' ? 'pointer' : 'default' }}
             >
@@ -135,10 +116,9 @@ export default function AdminDashboard() {
         </section>
         <section className="admin-table-section">
           <div className="admin-table-header">
-            <h2>Recent Activites</h2>
+            <h2>Assigned RFQs</h2>
             <div className="admin-table-search">
               <input type="text" placeholder="Search requests..." />
-              {/* <button className="admin-table-filter-btn">&#x1F5C2;</button> */}
             </div>
           </div>
           <table className="admin-table">
@@ -149,22 +129,16 @@ export default function AdminDashboard() {
                 <th>Description</th>
                 <th>Submitted Date</th>
                 <th>End Date</th>
-                {/* <th>Amount</th> */}
-                {/* <th>Status</th>
-                <th>Actions</th> */}
               </tr>
             </thead>
             <tbody>
               {submissions.map((row, idx) => (
-                <tr key={idx}>
+                <tr key={idx} style={{ cursor: 'pointer' }} onClick={() => navigate(`/rfq/${row.id}?panel=admin`, { state: { panel: 'admin' } })}>
                   <td>{row.id}</td>
                   <td><b>{row.client}</b></td>
                   <td>{row.service.length > 25 ? row.service.slice(0, 22) + '...' : row.service}</td>
                   <td>{row.date}</td>
                   <td>{row.end_date}</td>
-                  {/* <td>{row.amount}</td> */}
-                  {/* <td><span className={`admin-status ${row.statusClass}`}>{row.status}</span></td> */}
-                  {/* <td><button className="admin-table-actions">&#8942;</button></td> */}
                 </tr>
               ))}
             </tbody>
