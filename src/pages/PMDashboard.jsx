@@ -72,7 +72,7 @@ export default function PMDashboard() {
             </li>
             <li className="dashboard-nav-item">
               <button className="nav-link" style={{width: '100%', textAlign: 'left', background: 'none', border: 'none', padding: 0, cursor: 'pointer'}}>
-                <span role="img" aria-label="clients" style={{marginRight: '8px'}}>👤</span>Clients
+                <span role="img" aria-label="clients" style={{marginRight: '8px'}}>📁</span>Projects
               </button>
             </li>
             <li className="dashboard-nav-item">

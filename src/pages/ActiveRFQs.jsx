@@ -54,7 +54,7 @@ export default function ActiveRFQs() {
         <nav>
           <ul>
             <li className="dashboard-nav-item">
-              <button className="nav-link" style={{width: '100%', textAlign: 'left', background: 'none', border: 'none', padding: 0, cursor: 'pointer'}}>
+              <button className="nav-link" onClick={()=>navigate('/admin')} style={{width: '100%', textAlign: 'left', background: 'none', border: 'none', padding: 0, cursor: 'pointer'}}>
                 <span role="img" aria-label="dashboard" style={{marginRight: '8px'}}>📊</span>Home
               </button>
             </li>
@@ -70,6 +70,12 @@ export default function ActiveRFQs() {
             </li>
           </ul>
         </nav>
+        <div className="nav-footer">
+          <button className="btn" onClick={() => {
+            localStorage.removeItem('isLoggedIn');
+            navigate('/', { replace: true });
+          }}>Sign Out</button>
+        </div>
       </aside>
     );
   }
@@ -81,7 +87,7 @@ export default function ActiveRFQs() {
         <nav>
           <ul>
             <li className="dashboard-nav-item">
-              <button className="nav-link" style={{width: '100%', textAlign: 'left', background: 'none', border: 'none', padding: 0, cursor: 'pointer'}}>
+              <button className="nav-link"onClick={()=>navigate('/dashboard')} style={{width: '100%', textAlign: 'left', background: 'none', border: 'none', padding: 0, cursor: 'pointer'}}>
                 <span role="img" aria-label="home" style={{marginRight: '8px'}}>🏠</span>Home
               </button>
             </li>
@@ -102,6 +108,12 @@ export default function ActiveRFQs() {
                 </li>
           </ul>
         </nav>
+        <div className="nav-footer">
+          <button className="btn" onClick={() => {
+            localStorage.removeItem('isLoggedIn');
+            navigate('/', { replace: true });
+          }}>Sign Out</button>
+        </div>
       </aside>
     );
   }
