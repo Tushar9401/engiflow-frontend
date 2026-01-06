@@ -32,6 +32,9 @@ export default function RFQDetail() {
   const [commentText, setCommentText] = useState('');
   const [commentFile, setCommentFile] = useState(null);
   const [commentFileUrl, setCommentFileUrl] = useState(null);
+  // Assignment state: track selected PM and assigned PM
+  const [selectedPM, setSelectedPM] = useState('');
+  const [assignedPM, setAssignedPM] = useState(null);
 
   function handleCommentSubmit(e) {
     e.preventDefault();
@@ -85,7 +88,7 @@ export default function RFQDetail() {
 
   function renderAdminSidebar() {
     return (
-      <aside className="side-nav">
+      <aside className="side-nav" style={{ position: 'sticky', top: 0, height: '100vh', alignSelf: 'flex-start', overflow: 'auto', paddingTop: '24px' }}>
         <div className="nav-brand">EngiFlow</div>
         <nav>
           <ul>
@@ -100,7 +103,9 @@ export default function RFQDetail() {
               </button>
             </li>
             <li className="dashboard-nav-item">
-              <button className="nav-link" style={{width: '100%', textAlign: 'left', background: 'none', border: 'none', padding: 0, cursor: 'pointer'}}>
+              <button className="nav-link"
+              onClick={() => navigate('/admin/rfqs?panel=admin&status=all', { state: { panel: 'admin', status: 'all' } })}
+               style={{width: '100%', textAlign: 'left', background: 'none', border: 'none', padding: 0, cursor: 'pointer'}}>
                  <span role="img" aria-label="rfqs" style={{marginRight: '8px'}}>📄</span>RFQs
               </button>
             </li>
@@ -118,7 +123,7 @@ export default function RFQDetail() {
 
   function renderDashboardSidebar() {
     return (
-      <aside className="side-nav">
+      <aside className="side-nav" style={{ position: 'sticky', top: 0, height: '100vh', alignSelf: 'flex-start', overflow: 'auto', paddingTop: '24px' }}>
         <div className="nav-brand">EngiFlow</div>
         <nav>
           <ul>
@@ -247,13 +252,33 @@ export default function RFQDetail() {
           <div style={{ fontWeight: 700, fontSize: '1.25rem', marginBottom: 18 }}>Assign RFQ</div>
           <div style={{ marginBottom: 24 }}>
             <label style={{ fontWeight: 500, color: '#757575', fontSize: '1.08rem', display: 'block', marginBottom: 8 }}>Assign to Project Manager:</label>
-            <select style={{ width: '100%', padding: '10px', borderRadius: 8, border: '1.5px solid #e0e7ff', fontSize: '1.05rem', marginBottom: 12 }}>
-              <option>Select Project Manager</option>
-              <option>John Doe</option>
-              <option>Jane Smith</option>
+            <select
+              value={selectedPM}
+              onChange={e => setSelectedPM(e.target.value)}
+              disabled={!!assignedPM}
+              style={{ width: '100%', padding: '10px', borderRadius: 8, border: '1.5px solid #e0e7ff', fontSize: '1.05rem', marginBottom: 12 }}
+            >
+              <option value="">Select Project Manager</option>
+              <option value="John Doe">John Doe</option>
+              <option value="Jane Smith">Jane Smith</option>
             </select>
-            
-            <button style={{ background: '#5b4fff', color: '#fff', border: 'none', borderRadius: 8, padding: '10px 0', fontWeight: 600, fontSize: '1.05rem', cursor: 'pointer', width: '100%' }}>Assign to Project Manager</button>
+
+            <button
+              onClick={() => {
+                if (!selectedPM) return;
+                setAssignedPM(selectedPM);
+              }}
+              disabled={!!assignedPM || !selectedPM}
+              style={{ background: assignedPM ? '#a3a0f7' : '#5b4fff', color: '#fff', border: 'none', borderRadius: 8, padding: '10px 0', fontWeight: 600, fontSize: '1.05rem', cursor: assignedPM ? 'default' : 'pointer', width: '100%' }}
+            >
+              {assignedPM ? 'Assigned' : 'Assign to Project Manager'}
+            </button>
+
+            {assignedPM && (
+              <div style={{ marginTop: 12, color: '#374151', fontWeight: 700 }}>
+                Assigned to: {assignedPM}
+              </div>
+            )}
           </div>
           {/* <div style={{ marginBottom: 0 }}>
             <label style={{ fontWeight: 500, color: '#757575', fontSize: '1.08rem', display: 'block', marginBottom: 8 }}>Assign to Sub Contractor:</label>
