@@ -76,7 +76,7 @@ export default function PMDashboard() {
               </button>
             </li>
             <li className="dashboard-nav-item">
-              <button className="nav-link" style={{width: '100%', textAlign: 'left', background: 'none', border: 'none', padding: 0, cursor: 'pointer'}} onClick={() => navigate('/admin/rfqs?panel=admin', { state: { panel: 'admin' } })}>
+              <button className="nav-link" style={{width: '100%', textAlign: 'left', background: 'none', border: 'none', padding: 0, cursor: 'pointer'}} onClick={() => navigate('/admin/rfqs?panel=pm&status=all', { state: { panel: 'pm' } })}>
                 <span role="img" aria-label="rfqs" style={{marginRight: '8px'}}>📄</span>RFQs
               </button>
             </li>
@@ -100,7 +100,7 @@ export default function PMDashboard() {
               className="admin-stat-card"
               key={idx}
               onClick={() => {
-                if (stat.label === 'Active RFQs') navigate('/admin/rfqs?panel=admin', { state: { panel: 'admin' } })
+                if (stat.label === 'Active RFQs') navigate('/admin/rfqs?panel=pm', { state: { panel: 'pm' } })
               }}
               style={{ cursor: stat.label === 'Active RFQs' ? 'pointer' : 'default' }}
             >
@@ -133,7 +133,7 @@ export default function PMDashboard() {
             </thead>
             <tbody>
               {submissions.map((row, idx) => (
-                <tr key={idx} style={{ cursor: 'pointer' }} onClick={() => navigate(`/rfq/${row.id}?panel=admin`, { state: { panel: 'admin' } })}>
+                <tr key={idx} style={{ cursor: 'pointer' }} onClick={() => navigate(`/rfq/${row.id}?panel=pm`, { state: { panel: 'pm' } })}>
                   <td>{row.id}</td>
                   <td><b>{row.client}</b></td>
                   <td>{row.service.length > 25 ? row.service.slice(0, 22) + '...' : row.service}</td>

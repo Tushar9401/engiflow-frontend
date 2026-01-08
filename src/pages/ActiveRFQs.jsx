@@ -87,6 +87,39 @@ export default function ActiveRFQs() {
     );
   }
 
+  function renderPMSidebar() {
+    return (
+      <aside className="side-nav">
+        <div className="nav-brand">EngiFlow</div>
+        <nav>
+          <ul>
+            <li className="dashboard-nav-item">
+              <button className="nav-link" onClick={()=>navigate('/pm')} style={{width: '100%', textAlign: 'left', background: 'none', border: 'none', padding: 0, cursor: 'pointer'}}>
+                <span role="img" aria-label="dashboard" style={{marginRight: '8px'}}>📊</span>Home
+              </button>
+            </li>
+            <li className="dashboard-nav-item">
+              <button className="nav-link" style={{width: '100%', textAlign: 'left', background: 'none', border: 'none', padding: 0, cursor: 'pointer'}}>
+                <span role="img" aria-label="projects" style={{marginRight: '8px'}}>📁</span>Projects
+              </button>
+            </li>
+            <li className="dashboard-nav-item">
+              <button className="nav-link" onClick={() => navigate('/admin/rfqs?panel=pm&status=all')} style={{width: '100%', textAlign: 'left', background: 'none', border: 'none', padding: 0, cursor: 'pointer'}}>
+                 <span role="img" aria-label="rfqs" style={{marginRight: '8px'}}>📄</span>RFQs
+              </button>
+            </li>
+          </ul>
+        </nav>
+        <div className="nav-footer">
+          <button className="btn" onClick={() => {
+            localStorage.removeItem('isLoggedIn');
+            navigate('/', { replace: true });
+          }}>Sign Out</button>
+        </div>
+      </aside>
+    );
+  }
+
   function renderDashboardSidebar() {
     return (
       <aside className="side-nav">
@@ -127,7 +160,7 @@ export default function ActiveRFQs() {
 
   return (
     <div className="dashboard-layout">
-      {panel === 'admin' ? renderAdminSidebar() : renderDashboardSidebar()}
+      {panel === 'admin' ? renderAdminSidebar() : panel === 'pm' ? renderPMSidebar() : renderDashboardSidebar()}
 
       <main className="dashboard-main">
         <header style={{ padding: '28px 24px 0 24px' }}>

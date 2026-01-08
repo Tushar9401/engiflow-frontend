@@ -159,9 +159,42 @@ export default function RFQDetail() {
     );
   }
 
+  function renderPMSidebar() {
+    return (
+      <aside className="side-nav" style={{ position: 'sticky', top: 0, height: '100vh', alignSelf: 'flex-start', overflow: 'auto', paddingTop: '24px' }}>
+        <div className="nav-brand">EngiFlow</div>
+        <nav>
+          <ul>
+            <li className="dashboard-nav-item">
+              <button className="nav-link" onClick={()=>navigate('/pm')} style={{width: '100%', textAlign: 'left', background: 'none', border: 'none', padding: 0, cursor: 'pointer'}}>
+                <span role="img" aria-label="dashboard" style={{marginRight: '8px'}}>📊</span>Home
+              </button>
+            </li>
+            <li className="dashboard-nav-item">
+              <button className="nav-link" style={{width: '100%', textAlign: 'left', background: 'none', border: 'none', padding: 0, cursor: 'pointer'}}>
+                <span role="img" aria-label="projects" style={{marginRight: '8px'}}>📁</span>Projects
+              </button>
+            </li>
+            <li className="dashboard-nav-item">
+              <button className="nav-link" onClick={() => navigate('/admin/rfqs?panel=pm&status=all')} style={{width: '100%', textAlign: 'left', background: 'none', border: 'none', padding: 0, cursor: 'pointer'}}>
+                 <span role="img" aria-label="rfqs" style={{marginRight: '8px'}}>📄</span>RFQs
+              </button>
+            </li>
+          </ul>
+        </nav>
+        <div className="nav-footer">
+          <button className="btn" onClick={() => {
+            localStorage.removeItem('isLoggedIn');
+            navigate('/', { replace: true });
+          }}>Sign Out</button>
+        </div>
+      </aside>
+    );
+  }
+
   return (
     <div className="rfq-detail-layout" style={{ display: 'flex', gap: '32px', padding: '32px 0', minHeight: '100vh', alignItems: 'flex-start' }}>
-      {panel === 'admin' ? renderAdminSidebar() : renderDashboardSidebar()}
+      {panel === 'admin' ? renderAdminSidebar() : panel === 'pm' ? renderPMSidebar() : renderDashboardSidebar()}
   <div style={{ flex: 2, maxWidth: '900px', margin: '0' }}>
         <div style={{ marginBottom: '18px', color: '#757575', fontSize: '1rem', display: 'flex', alignItems: 'center', gap: 8 }}>
           <span style={{ fontSize: '1.1em', cursor: 'pointer' }} onClick={() => navigate(`/admin/rfqs?panel=${panel}`, { state: { panel } })}>&larr;</span> Back to RFQ Listings
