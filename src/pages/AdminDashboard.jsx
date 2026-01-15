@@ -90,6 +90,15 @@ export default function AdminDashboard() {
                 <span role="img" aria-label="rfqs" style={{marginRight: '8px'}}>📄</span>RFQs
               </button>
             </li>
+            <li className="dashboard-nav-item">
+              <button
+                className="nav-link"
+                style={{width: '100%', textAlign: 'left', background: 'none', border: 'none', padding: 0, cursor: 'pointer'}}
+                onClick={() => navigate('/admin/reports?panel=admin', { state: { panel: 'admin' } })}
+              >
+                <span role="img" aria-label="reports" style={{marginRight: '8px'}}>📊</span>View Reports
+              </button>
+            </li>
             {/* <li className="dashboard-nav-item">
               <button className="nav-link" style={{width: '100%', textAlign: 'left', background: 'none', border: 'none', padding: 0, cursor: 'pointer'}}>
                 <span role="img" aria-label="settings" style={{marginRight: '8px'}}>⚙️</span>Settings
@@ -115,15 +124,18 @@ export default function AdminDashboard() {
               className="admin-stat-card"
               key={idx}
               onClick={() => {
-                // navigate to listing for Active or Pending RFQs when those cards are clicked
+                // navigate to listing for Active, Pending or Completed RFQs when those cards are clicked
                 if (stat.label === 'Active RFQs') {
                   navigate('/admin/rfqs?panel=admin', { state: { panel: 'admin' } });
                 }
                 if (stat.label === 'Pending RFQs') {
                   navigate('/admin/rfqs?panel=admin&status=pending', { state: { panel: 'admin', status: 'pending' } });
                 }
+                if (stat.label === 'Completed') {
+                  navigate('/admin/rfqs?panel=admin&status=completed', { state: { panel: 'admin', status: 'completed' } });
+                }
               }}
-              style={{ cursor: (stat.label === 'Active RFQs' || stat.label === 'Pending RFQs') ? 'pointer' : 'default' }}
+              style={{ cursor: (stat.label === 'Active RFQs' || stat.label === 'Pending RFQs' || stat.label === 'Completed') ? 'pointer' : 'default' }}
             >
               <div className="admin-stat-row" style={{justifyContent: 'center'}}>
                 <span className="admin-stat-icon">{stat.icon}</span>

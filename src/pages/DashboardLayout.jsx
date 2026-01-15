@@ -57,11 +57,7 @@ export default function DashboardLayout() {
                     <span role="img" aria-label="quote" style={{marginRight: '8px'}}>📝</span>Request Quotation
                   </button>
                 </li>
-                <li className="dashboard-nav-item">
-                  <button className="nav-link" style={{width: '100%', textAlign: 'left', background: 'none', border: 'none', padding: 0, cursor: 'pointer'}} onClick={() => {/* TODO: Implement action */}}>
-                    <span role="img" aria-label="report" style={{marginRight: '8px'}}>📊</span>View Reports
-                  </button>
-                </li>
+                {/* View Reports moved to Admin sidebar per UX change */}
                 <li className="dashboard-nav-item">
                   <button className="nav-link" style={{width: '100%', textAlign: 'left', background: 'none', border: 'none', padding: 0, cursor: 'pointer'}} onClick={() => {/* TODO: Implement action */}}>
                     <span role="img" aria-label="support" style={{marginRight: '8px'}}>💬</span>Contact Support

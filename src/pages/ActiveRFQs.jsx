@@ -50,7 +50,7 @@ export default function ActiveRFQs() {
     ? location.state.status
     : (params.get('status') || (hashParams && hashParams.get('status')) || 'active');
 
-  const title = status === 'pending' ? 'Pending RFQs' : status === 'all' ? 'All RFQs' : 'Active RFQs';
+  const title = status === 'completed' ? 'Completed RFQ' : status === 'pending' ? 'Pending RFQs' : status === 'all' ? 'All RFQs' : 'Active RFQs';
 
   function renderAdminSidebar() {
     return (
@@ -73,6 +73,15 @@ export default function ActiveRFQs() {
               onClick={() => navigate('/admin/rfqs?panel=admin&status=all', { state: { panel: 'admin', status: 'all' } })}
                style={{width: '100%', textAlign: 'left', background: 'none', border: 'none', padding: 0, cursor: 'pointer'}}>
                 <span role="img" aria-label="rfqs" style={{marginRight: '8px'}}>📄</span>RFQs
+              </button>
+            </li>
+            <li className="dashboard-nav-item">
+              <button
+                className="nav-link"
+                style={{width: '100%', textAlign: 'left', background: 'none', border: 'none', padding: 0, cursor: 'pointer'}}
+                onClick={() => navigate('/admin/reports?panel=admin', { state: { panel: 'admin' } })}
+              >
+                <span role="img" aria-label="reports" style={{marginRight: '8px'}}>📊</span>View Reports
               </button>
             </li>
           </ul>
@@ -120,6 +129,34 @@ export default function ActiveRFQs() {
     );
   }
 
+    function renderSubcontractorSidebar() {
+      return (
+        <aside className="side-nav">
+          <div className="nav-brand">EngiFlow</div>
+          <nav>
+            <ul>
+              <li className="dashboard-nav-item">
+                <button className="nav-link" onClick={() => navigate('/subcontractor')} style={{width: '100%', textAlign: 'left', background: 'none', border: 'none', padding: 0, cursor: 'pointer'}}>
+                  <span role="img" aria-label="dashboard" style={{marginRight: '8px'}}>🏠</span>Home
+                </button>
+              </li>
+              <li className="dashboard-nav-item">
+                <button className="nav-link" onClick={() => navigate('/admin/rfqs?panel=subcontractor&status=all', { state: { panel: 'subcontractor' } })} style={{width: '100%', textAlign: 'left', background: 'none', border: 'none', padding: 0, cursor: 'pointer'}}>
+                  <span role="img" aria-label="rfqs" style={{marginRight: '8px'}}>📄</span>All RFQs
+                </button>
+              </li>
+            </ul>
+          </nav>
+          <div className="nav-footer">
+            <button className="btn" onClick={() => {
+              localStorage.removeItem('isLoggedIn');
+              navigate('/', { replace: true });
+            }}>Sign Out</button>
+          </div>
+        </aside>
+      );
+    }
+
   function renderDashboardSidebar() {
     return (
       <aside className="side-nav">
@@ -160,13 +197,13 @@ export default function ActiveRFQs() {
 
   return (
     <div className="dashboard-layout">
-      {panel === 'admin' ? renderAdminSidebar() : panel === 'pm' ? renderPMSidebar() : renderDashboardSidebar()}
+  {panel === 'admin' ? renderAdminSidebar() : panel === 'pm' ? renderPMSidebar() : panel === 'subcontractor' ? renderSubcontractorSidebar() : renderDashboardSidebar()}
 
       <main className="dashboard-main">
         <header style={{ padding: '28px 24px 0 24px' }}>
           <h1 style={{ fontSize: '2rem', marginBottom: 6, fontWeight: 800, color: '#5b4fff' }}>{title}</h1>
           <p style={{ color: '#6b7280', marginBottom: 20 }}>
-            {status === 'pending' ? 'List of RFQs awaiting review or action.' : status === 'all' ? 'All RFQs across all statuses.' : 'List of currently active requests for quotation.'}
+            {status === 'pending' ? 'List of RFQs awaiting review or action.' : status === 'completed' ? 'List of completed RFQs.' : status === 'all' ? 'All RFQs across all statuses.' : 'List of currently active requests for quotation.'}
           </p>
         </header>
 
@@ -191,7 +228,7 @@ export default function ActiveRFQs() {
               </thead>
               <tbody>
                 {rfqs.map((r, i) => (
-                  <tr key={i} style={{ cursor: 'pointer' }} onClick={() => navigate(`/rfq/${r.id}?panel=${panel}`, { state: { panel } })}>
+                  <tr key={i} style={{ cursor: 'pointer' }} onClick={() => navigate(`/rfq/${r.id}?panel=${panel}`, { state: { panel, subcontractor: (location && location.state && location.state.subcontractor) || undefined } })}>
                     <td>{r.id}</td>
                     <td><b>{r.client}</b></td>
                     <td>{r.description.length > 30 ? r.description.slice(0, 30) + '...' : r.description}</td>
