@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import './Dashboard.css';
+import './RFQComments.css';
 
 export default function RFQDetail() {
   const { id } = useParams();
@@ -558,7 +559,7 @@ export default function RFQDetail() {
 
         {/* Comment Section - moved below deliverables */}
         <div style={{width: '100%', maxWidth: 800, margin: '24px auto 0 auto'}}>
-          <div style={{background: '#fff', borderRadius: 18, boxShadow: '0 2px 12px 0 rgba(80,80,120,0.06)', padding: '28px 32px'}}>
+          <div className="rfq-comments-panel" style={{borderRadius: 18, boxShadow: '0 2px 12px 0 rgba(80,80,120,0.06)', padding: '20px 22px'}}>
             <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12}}>
               <div style={{fontWeight: 700, fontSize: '1.18rem'}}>Comments</div>
               {(panel === 'admin' || panel === 'pm') && (
@@ -575,27 +576,35 @@ export default function RFQDetail() {
                 </div>
               )}
             </div>
-            <div ref={commentsRef} style={{marginBottom: 18, maxHeight: 240, overflowY: 'auto', paddingRight: 8}}>
+            <div ref={commentsRef} className="comments-list" style={{marginBottom: 18}}>
               {comments.map((c, i) => (
-                <div key={i} style={{marginBottom: 14}}>
-                  <span style={{fontWeight: 600, color: c.user === 'Admin' ? '#5b4fff' : c.user === 'Project Manager' ? '#1dbf73' : '#18181b'}}>{c.user}:</span>
-                  <span style={{marginLeft: 8}}>{c.text}</span>
-                  {c.recipient && c.recipient !== 'All' && (
-                    <span style={{marginLeft: 10, fontSize: '0.9rem', color: '#6b7280'}}>(to {c.recipient})</span>
-                  )}
-                  {c.attachment && c.attachment.type && c.attachment.type.startsWith('image') && (
-                    <img src={c.attachment.url} alt="comment attachment" style={{marginLeft: 10, maxHeight: 40, borderRadius: 6, verticalAlign: 'middle'}} />
-                  )}
-                  {c.attachment && c.attachment.type === 'application/pdf' && (
-                    <a href={c.attachment.url} target="_blank" rel="noopener noreferrer" style={{marginLeft: 10, color: '#5b4fff', textDecoration: 'underline', fontSize: '0.98em'}}>
-                      <span role="img" aria-label="pdf">📄</span> {c.attachment.name}
-                    </a>
-                  )}
+                <div key={i} className={`comment-item ${c.user === 'Admin' ? 'admin' : c.user === 'Project Manager' ? 'pm' : 'you'}`}>
+                  <div style={{minWidth: 90, display: 'flex', alignItems: 'center'}}>
+                    <div style={{display: 'flex', flexDirection: 'column'}}>
+                      <span className="comment-user" style={{fontWeight: 800, fontSize: '0.96rem', color: c.user === 'Admin' ? '#4c2fc9' : c.user === 'Project Manager' ? '#0ea57a' : '#111827'}}>{c.user}</span>
+                      {c.recipient && c.recipient !== 'All' && (
+                        <span className="comment-recipient" style={{fontSize: '0.82rem', color: '#6b7280', marginTop: 4}}>to {c.recipient}</span>
+                      )}
+                    </div>
+                  </div>
+                  <div style={{flex: 1}}>
+                    <div className="comment-text" style={{color: '#374151', lineHeight: 1.6, wordBreak: 'break-word'}}>{c.text}</div>
+                    <div style={{marginTop: 8}}>
+                      {c.attachment && c.attachment.type && c.attachment.type.startsWith('image') && (
+                        <img src={c.attachment.url} alt="comment attachment" className="comment-attachment" style={{maxHeight: 52, borderRadius: 8}} />
+                      )}
+                      {c.attachment && c.attachment.type === 'application/pdf' && (
+                        <a href={c.attachment.url} target="_blank" rel="noopener noreferrer" style={{marginLeft: 0, color: '#5b4fff', textDecoration: 'underline', fontSize: '0.98em'}}>
+                          <span role="img" aria-label="pdf">📄</span> {c.attachment.name}
+                        </a>
+                      )}
+                    </div>
+                  </div>
                 </div>
               ))}
             </div>
             <form style={{display: 'flex', gap: 12, alignItems: 'flex-end'}} onSubmit={handleCommentSubmit}>
-              <textarea value={commentText} onChange={e => setCommentText(e.target.value)} placeholder="Add a comment..." style={{flex: 1, borderRadius: 8, border: '1.5px solid #e0e7ff', padding: 12, fontSize: '1.05rem', resize: 'vertical', minHeight: 38}} />
+              <textarea className="comment-input" value={commentText} onChange={e => setCommentText(e.target.value)} placeholder="Add a comment..." style={{flex: 1, borderRadius: 10, border: '1.2px solid #eef2ff', padding: 14, fontSize: '1.05rem', resize: 'vertical', minHeight: 46, boxShadow: 'inset 0 1px 0 rgba(16,24,40,0.02)'}} />
               <label htmlFor="comment-attach" style={{cursor: 'pointer', display: 'flex', alignItems: 'center', marginRight: 8}} title="Attach file">
                 <svg width="22" height="22" fill="none" xmlns="http://www.w3.org/2000/svg" style={{display: 'block'}}>
                   <path d="M7.5 12.5L14.5 5.5M14.5 5.5V10.5M14.5 5.5H9.5" stroke="#5b4fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -603,7 +612,7 @@ export default function RFQDetail() {
                 </svg>
                 <input id="comment-attach" type="file" accept="image/*,application/pdf" onChange={handleFileChange} style={{display: 'none'}} />
               </label>
-              <button type="submit" style={{background: '#5b4fff', color: '#fff', border: 'none', borderRadius: 8, padding: '10px 22px', fontWeight: 600, fontSize: '1.05rem', cursor: 'pointer'}}>Post</button>
+              <button type="submit" className="comment-post-btn" style={{background: 'linear-gradient(90deg,#5b4fff,#7c5bff)', color: '#fff', border: 'none', borderRadius: 10, padding: '10px 22px', fontWeight: 700, fontSize: '1.02rem', cursor: 'pointer', boxShadow: '0 6px 18px rgba(91,79,255,0.12)'}}>Post</button>
             </form>
           </div>
         </div>
