@@ -33,6 +33,7 @@ const submissions = [
     service: 'Structural Design',
     date: '2024-12-30',
     end_date: '2026-01-01',
+    project_status: 'Bidding',
     // status: 'Pending',
     // statusClass: 'pending',
   },
@@ -42,6 +43,7 @@ const submissions = [
     service: 'Civil Works',
     date: '2024-12-29',
     end_date: '2026-01-01',
+    project_status: 'On Hold',
     // status: 'Reviewed',
     // statusClass: 'reviewed',
   },
@@ -49,6 +51,7 @@ const submissions = [
     id: 'RFQ-2024-003',
     client: 'Tech Infra',
     service: 'Site Investigation and concreate testing',
+    project_status: 'Bidding',
     date: '2024-12-28',
     end_date: '2026-01-01',
     // status: 'Approved',
@@ -132,7 +135,8 @@ export default function AdminDashboard() {
                   navigate('/admin/rfqs?panel=admin&status=pending', { state: { panel: 'admin', status: 'pending' } });
                 }
                 if (stat.label === 'Completed') {
-                  navigate('/admin/rfqs?panel=admin&status=completed', { state: { panel: 'admin', status: 'completed' } });
+                  // Navigate to Projects list view instead of RFQ listing for completed card
+                  navigate('/admin/projects', { state: { panel: 'admin' } });
                 }
               }}
               style={{ cursor: (stat.label === 'Active RFQs' || stat.label === 'Pending RFQs' || stat.label === 'Completed') ? 'pointer' : 'default' }}
@@ -161,6 +165,7 @@ export default function AdminDashboard() {
                 <th>ID</th>
                 <th>Client</th>
                 <th>Description</th>
+                <th>Project Status</th>
                 <th>Submitted Date</th>
                 <th>End Date</th>
                 {/* <th>Amount</th> */}
@@ -174,6 +179,7 @@ export default function AdminDashboard() {
                   <td>{row.id}</td>
                   <td><b>{row.client}</b></td>
                   <td>{row.service.length > 25 ? row.service.slice(0, 22) + '...' : row.service}</td>
+                  <td>{row.project_status}</td>
                   <td>{row.date}</td>
                   <td>{row.end_date}</td>
                   {/* <td>{row.amount}</td> */}

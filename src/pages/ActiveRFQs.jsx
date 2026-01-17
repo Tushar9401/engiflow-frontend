@@ -7,6 +7,7 @@ const rfqs = [
     id: 'RFQ-2024-001',
     client: 'Acme Corp',
     description: 'Structural Design',
+    project_status: 'In Progress',
     submitted: '2024-12-30',
     end_date: '2026-01-01',
   },
@@ -14,6 +15,7 @@ const rfqs = [
     id: 'RFQ-2024-002',
     client: 'Global Build',
     description: 'Civil Works',
+    project_status: 'Bidding',
     submitted: '2024-12-29',
     end_date: '2026-01-01',
   },
@@ -21,6 +23,7 @@ const rfqs = [
     id: 'RFQ-2024-003',
     client: 'Tech Infra',
     description: 'Site Investigation and concrete testing',
+    project_status: 'On Hold',
     submitted: '2024-12-28',
     end_date: '2026-01-01',
   },
@@ -222,6 +225,7 @@ export default function ActiveRFQs() {
                   <th>ID</th>
                   <th>Client</th>
                   <th>Description</th>
+                  <th>Project Status</th>
                   <th>Submitted Date</th>
                   <th>End Date</th>
                 </tr>
@@ -232,6 +236,7 @@ export default function ActiveRFQs() {
                     <td>{r.id}</td>
                     <td><b>{r.client}</b></td>
                     <td>{r.description.length > 30 ? r.description.slice(0, 30) + '...' : r.description}</td>
+                    <td>{r.project_status}</td>
                     <td>{r.submitted}</td>
                     <td>{r.end_date}</td>
                   </tr>

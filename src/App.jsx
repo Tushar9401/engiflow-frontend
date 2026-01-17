@@ -1,4 +1,5 @@
 import AdminDashboard from './pages/AdminDashboard';
+import ProjectsList from './pages/ProjectsList';
 import Signup from './pages/Signup'
 import Login from './pages/Login'
 import DashboardLayout from './pages/DashboardLayout'
@@ -27,6 +28,7 @@ function App() {
 
   <Route path="/" element={<Login />} />
   <Route path="/admin" element={<AdminDashboard />} />
+  <Route path="/admin/projects" element={<ProjectsList />} />
   <Route path="/admin/rfqs" element={<ActiveRFQs />} />
   <Route path="/pm" element={<PMDashboard />} />
   <Route path="/subcontractor" element={<SubcontractorDashboard />} />
