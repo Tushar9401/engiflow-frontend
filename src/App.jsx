@@ -8,6 +8,8 @@ import DashboardServicesCivil from './pages/DashboardServicesCivil'
 import DashboardServicesStructural from './pages/DashboardServicesStructural'
 import RFQDetail from './pages/RFQDetail';
 import ActiveRFQs from './pages/ActiveRFQs';
+import ActiveDeliverables from './pages/ActiveDeliverables';
+import DeliverableDetail from './pages/DeliverableDetail';
 import PMDashboard from './pages/PMDashboard';
 import SubcontractorDashboard from './pages/SubcontractorDashboard'
 import { Routes, Route, Navigate } from 'react-router-dom'
@@ -30,9 +32,11 @@ function App() {
   <Route path="/admin" element={<AdminDashboard />} />
   <Route path="/admin/projects" element={<ProjectsList />} />
   <Route path="/admin/rfqs" element={<ActiveRFQs />} />
+  <Route path="/subcontractor/active-deliverables" element={<ActiveDeliverables />} />
   <Route path="/pm" element={<PMDashboard />} />
   <Route path="/subcontractor" element={<SubcontractorDashboard />} />
   <Route path="/rfq/:id" element={<RFQDetail />} />
+  <Route path="/deliverable/:id" element={<DeliverableDetail />} />
   <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   )

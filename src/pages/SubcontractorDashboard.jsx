@@ -32,8 +32,8 @@ export default function SubcontractorDashboard() {
               </button>
             </li>
             <li className="dashboard-nav-item">
-              <button className="nav-link" onClick={() => navigate('/admin/rfqs?panel=subcontractor&status=all', { state: { panel: 'subcontractor' } })} style={{width: '100%', textAlign: 'left', background: 'none', border: 'none', padding: 0, cursor: 'pointer'}}>
-                <span role="img" aria-label="rfqs" style={{marginRight: '8px'}}>📄</span>All RFQs
+              <button className="nav-link" onClick={() => navigate('/subcontractor/active-deliverables?subcontractor=' + encodeURIComponent(company), { state: { subcontractor: company } })} style={{width: '100%', textAlign: 'left', background: 'none', border: 'none', padding: 0, cursor: 'pointer'}}>
+                <span role="img" aria-label="rfqs" style={{marginRight: '8px'}}>📦</span>Active Deliverables
               </button>
             </li>
           </ul>
@@ -52,7 +52,7 @@ export default function SubcontractorDashboard() {
         </header>
 
         <section className="cards">
-        <div className="stat-card" onClick={() => navigate('/admin/rfqs?panel=subcontractor&status=active', { state: { panel: 'subcontractor', subcontractor: company } })} style={{ cursor: 'pointer' }}>
+  <div className="stat-card" onClick={() => navigate('/subcontractor/active-deliverables', { state: { subcontractor: company } })} style={{ cursor: 'pointer' }}>
           <div className="stat-top">
             <div className="icon">🧰</div>
             <div>
