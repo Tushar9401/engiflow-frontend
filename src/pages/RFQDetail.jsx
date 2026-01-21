@@ -53,12 +53,16 @@ export default function RFQDetail() {
   const subcontractors = ['ABC Constructions', 'XYZ Subcontractors', 'SubCo A'];
   const [deliverables, setDeliverables] = useState([]);
   const [newDesc, setNewDesc] = useState('');
+  const [newTitle, setNewTitle] = useState('');
   const [newAssignedSubs, setNewAssignedSubs] = useState([]);
-  const [newAttachment, setNewAttachment] = useState(null);
-  const [newAttachmentUrl, setNewAttachmentUrl] = useState(null);
+  const [newAttachment, setNewAttachment] = useState([]);
+  const [newAttachmentUrl, setNewAttachmentUrl] = useState([]);
   const [editingRowId, setEditingRowId] = useState(null);
   const [editingDesc, setEditingDesc] = useState('');
+  const [editingTitle, setEditingTitle] = useState('');
   const [editingAssigned, setEditingAssigned] = useState([]);
+  const [subsOpen, setSubsOpen] = useState(false);
+  const subsRef = useRef(null);
   
 
   function toggleSubcontractorSelection(name) {
@@ -69,22 +73,27 @@ export default function RFQDetail() {
     if (!newDesc || !newDesc.trim()) return;
     const d = {
       id: Date.now(),
+      title: newTitle || 'Untitled',
       description: newDesc,
       assigned: [...newAssignedSubs],
-      attachment: newAttachment ? { name: newAttachment.name, url: newAttachmentUrl, type: newAttachment.type } : null
+      attachments: (newAttachment && newAttachment.length > 0) ? newAttachment.map((f, i) => ({ name: f.name, url: newAttachmentUrl[i] || URL.createObjectURL(f), type: f.type })) : []
     };
     setDeliverables(prev => [d, ...prev]);
     setNewDesc('');
+    setNewTitle('');
     setNewAssignedSubs([]);
-    setNewAttachment(null);
-    setNewAttachmentUrl(null);
+    setNewAttachment([]);
+    setNewAttachmentUrl([]);
   }
 
   function handleNewAttachmentChange(e) {
-    const file = e.target.files[0];
-    if (file) {
-      setNewAttachment(file);
-      setNewAttachmentUrl(URL.createObjectURL(file));
+    const files = Array.from(e.target.files || []);
+    if (files.length > 0) {
+      setNewAttachment(files);
+      setNewAttachmentUrl(files.map(f => URL.createObjectURL(f)));
+    } else {
+      setNewAttachment([]);
+      setNewAttachmentUrl([]);
     }
   }
 
@@ -165,6 +174,17 @@ export default function RFQDetail() {
       // ignore in case of SSR or missing DOM
     }
   }, [comments]);
+
+  // close subcontractor dropdown when clicking outside
+  useEffect(() => {
+    function onDocClick(e) {
+      if (subsRef.current && !subsRef.current.contains(e.target)) {
+        setSubsOpen(false);
+      }
+    }
+    document.addEventListener('click', onDocClick);
+    return () => document.removeEventListener('click', onDocClick);
+  }, []);
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -337,9 +357,9 @@ export default function RFQDetail() {
   const assignedDeliverables = sourceDeliverables.filter(d => d && d.assigned && subcontractor && d.assigned.includes(subcontractor));
 
   return (
-    <div className="rfq-detail-layout" style={{ display: 'flex', gap: '32px', padding: '32px 0', minHeight: '100vh', alignItems: 'flex-start' }}>
+  <div className="rfq-detail-layout" style={{ display: 'flex', gap: '32px', padding: '32px 0', minHeight: '100vh', alignItems: 'flex-start', background: 'linear-gradient(160deg, #f3e8ff 0%, #f8fafc 100%)', width: '100%' }}>
       {panel === 'admin' ? renderAdminSidebar() : panel === 'pm' ? renderPMSidebar() : panel === 'subcontractor' ? renderSubcontractorSidebar() : renderDashboardSidebar()}
-  <div style={{ flex: 2, maxWidth: '900px', margin: '0' }}>
+  <div style={{ flex: 2, maxWidth: 'none', margin: '0' }}>
         <div style={{ marginBottom: '18px', color: '#757575', fontSize: '1rem', display: 'flex', alignItems: 'center', gap: 8 }}>
           <span style={{ fontSize: '1.1em', cursor: 'pointer' }} onClick={() => navigate(`/admin/rfqs?panel=${panel}`, { state: { panel } })}>&larr;</span> Back to RFQ Listings
         </div>
@@ -405,7 +425,7 @@ export default function RFQDetail() {
         )}
         {/* Deliverables table - PM sees full manager view, subcontractor sees only assigned items */}
         {(panel === 'pm' || panel === 'subcontractor') && (
-          <div style={{width: '100%', maxWidth: 900, margin: '24px auto', background: '#fff', borderRadius: 18, boxShadow: '0 6px 30px rgba(78,70,255,0.08)', padding: 20}}>
+          <div style={{width: '100%', maxWidth: 'none', margin: '24px 0', background: '#fff', borderRadius: 18, boxShadow: '0 10px 40px rgba(78,70,255,0.06)', padding: 28, boxSizing: 'border-box'}}>
             <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12}}>
               <div>
                 <div style={{fontWeight: 800, fontSize: '1.2rem'}}>Deliverables</div>
@@ -419,28 +439,73 @@ export default function RFQDetail() {
             {/* Add row inputs and table shown only to PMs - subcontractor sees assigned items only below */}
             {panel === 'pm' && (
               <>
-                {/* Add row inputs */}
-                <div style={{display: 'grid', gridTemplateColumns: '1fr auto', gap: 16, marginBottom: 18, alignItems: 'start'}}>
-                  <textarea
-                    value={newDesc}
-                    onChange={e => setNewDesc(e.target.value)}
-                    placeholder="Description"
-                    rows={6}
-                    style={{padding: 18, borderRadius: 12, border: '1px solid #eef2ff', minHeight: 200, resize: 'vertical', fontSize: '1rem', lineHeight: 1.6, whiteSpace: 'pre-wrap', wordBreak: 'break-word'}}
-                  />
+                {/* Add row inputs - vertical layout per design: Title (row 1), Description (row 2), Subcontractors + Attach (row 3) */}
+                <div style={{display: 'flex', flexDirection: 'column', gap: 12, marginBottom: 18}}>
+                  {/* Row 1: Title */}
+                  <div>
+                    <div style={{fontSize: '0.9rem', color: '#6b7280', marginBottom: 8}}>Title</div>
+                    <input type="text" placeholder="Deliverable title" value={newTitle} onChange={e => setNewTitle(e.target.value)} style={{width: '100%', padding: 14, borderRadius: 12, border: '1px solid #eef2ff', fontSize: '1rem', background: '#fff', boxShadow: 'inset 0 1px 0 rgba(16,24,40,0.03)'}} />
+                  </div>
 
-                  <div style={{display: 'flex', flexDirection: 'column', gap: 12, alignItems: 'flex-end'}}>
-                    <label htmlFor="deliverable-attach" style={{display: 'inline-flex', alignItems: 'center', gap: 8, padding: '8px 12px', borderRadius: 10, background: newAttachment ? '#eef2ff' : '#f8fafc', cursor: 'pointer', border: '1px solid #eef2ff', fontSize: '0.95rem'}}>
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" stroke="#5b4fff" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/><path d="M7 10l5-5 5 5" stroke="#5b4fff" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                      <span style={{fontSize: '0.95rem'}}>{newAttachment ? newAttachment.name : 'Attach'}</span>
-                      <input id="deliverable-attach" type="file" accept="image/*,application/pdf" onChange={handleNewAttachmentChange} style={{display: 'none'}} />
-                    </label>
+                  {/* Row 2: Description */}
+                  <div>
+                    <div style={{fontSize: '0.9rem', color: '#6b7280', marginBottom: 8}}>Description</div>
+                    <textarea value={newDesc} onChange={e => setNewDesc(e.target.value)} placeholder="Describe this deliverable in detail…" rows={4} style={{width: '100%', padding: 14, borderRadius: 12, border: '1px solid #eef2ff', resize: 'vertical', fontSize: '1rem', lineHeight: 1.5, background: '#fff', boxShadow: 'inset 0 1px 0 rgba(16,24,40,0.03)'}} />
+                  </div>
 
-                      <div style={{display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap', justifyContent: 'flex-end'}}>
-                        {subcontractors.map((s, i) => (
-                          <button key={i} onClick={() => toggleSubcontractorSelection(s)} style={{background: newAssignedSubs.includes(s) ? '#eef2ff' : '#f8fafc', border: '1px solid #eef2ff', padding: '8px 12px', borderRadius: 999, cursor: 'pointer', fontSize: '0.95rem'}}>{s}</button>
-                        ))}
+                  {/* Row 3: Subcontractors (left) and Attach (right) */}
+                  <div style={{display: 'flex', gap: 16, alignItems: 'center'}}>
+                    <div style={{flex: 1}}>
+                      <div style={{fontSize: '0.9rem', color: '#6b7280', marginBottom: 8}}>Subcontractors</div>
+                      <div style={{display: 'flex', flexDirection: 'column', gap: 8}}>
+                        <div style={{position: 'relative'}} ref={subsRef}>
+                          <button type="button" onClick={() => setSubsOpen(o => !o)} style={{width: '100%', textAlign: 'left', padding: '10px 12px', borderRadius: 10, border: '1px solid #eef2ff', background: '#fafbff', fontSize: '0.95rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8}}>
+                            <div style={{display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center'}}>
+                              {newAssignedSubs.length === 0 ? (
+                                <span style={{color: '#9ca3af'}}>Select subcontractors…</span>
+                              ) : (
+                                newAssignedSubs.map((s, idx) => (
+                                  <span key={idx} style={{background: '#eef2ff', color: '#4c51bf', padding: '6px 10px', borderRadius: 999, fontSize: '0.9rem'}}>{s}</span>
+                                ))
+                              )}
+                            </div>
+                            <span style={{opacity: 0.7}}>{subsOpen ? '▴' : '▾'}</span>
+                          </button>
+
+                          {subsOpen && (
+                            <div style={{position: 'absolute', top: 'calc(100% + 8px)', left: 0, right: 0, background: '#fff', border: '1px solid #e6e6f8', borderRadius: 10, padding: 8, zIndex: 80, maxHeight: 220, overflowY: 'auto', boxShadow: '0 10px 30px rgba(15,23,42,0.06)'}}>
+                              {subcontractors.map((s, i) => (
+                                <label key={i} style={{display: 'flex', alignItems: 'center', gap: 10, padding: '8px 10px', borderRadius: 8, cursor: 'pointer'}}>
+                                  <input type="checkbox" checked={newAssignedSubs.includes(s)} onChange={() => toggleSubcontractorSelection(s)} />
+                                  <span style={{fontSize: '0.95rem'}}>{s}</span>
+                                </label>
+                              ))}
+                            </div>
+                          )}
+                        </div>
                       </div>
+                    </div>
+
+                    <div style={{flex: '0 0 260px', display: 'flex', flexDirection: 'column', gap: 8}}>
+                      <div style={{fontSize: '0.9rem', color: '#6b7280'}}>Attachments</div>
+                      <div style={{display: 'flex', gap: 8, alignItems: 'center'}}>
+                        <label htmlFor="deliverable-attach" style={{display: 'inline-flex', alignItems: 'center', gap: 8, padding: '10px 14px', borderRadius: 10, background: '#f8f6ff', cursor: 'pointer', border: '1px solid #eef2ff'}}>
+                          📎 Attach files
+                          <input id="deliverable-attach" type="file" multiple accept="image/*,application/pdf" onChange={handleNewAttachmentChange} style={{display: 'none'}} />
+                        </label>
+                        <div style={{fontSize: '0.9rem', color: '#6b7280'}}>
+                          {newAttachment && newAttachment.length > 0 ? (
+                            <div style={{display: 'flex', gap: 8, flexWrap: 'wrap'}}>
+                              {newAttachment.map((f, idx) => (
+                                <div key={idx} style={{background: '#f4f4ff', padding: '6px 10px', borderRadius: 8, fontSize: '0.9rem'}}>{f.name}</div>
+                              ))}
+                            </div>
+                          ) : (
+                            <div style={{color: '#9ca3af'}}>No files attached</div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
@@ -449,37 +514,52 @@ export default function RFQDetail() {
                   <table style={{width: '100%', borderCollapse: 'collapse'}}>
                     <thead>
                       <tr style={{textAlign: 'left', borderBottom: '1px solid #f0f0ff'}}>
-                        <th style={{padding: '12px 8px', fontSize: '0.95rem'}}>Description</th>
-                        <th style={{padding: '12px 8px', fontSize: '0.95rem'}}>Attachment</th>
-                        <th style={{padding: '12px 8px', fontSize: '0.95rem'}}>Assigned Subcontractors</th>
+                        <th style={{padding: '12px 8px', fontSize: '0.95rem', width: 260, borderRight: '1px solid #f3eef9'}}>Title</th>
+                        <th style={{padding: '12px 8px', fontSize: '0.95rem',width: 260, borderRight: '1px solid #f3eef9'}}>Description</th>
+                        <th style={{padding: '12px 8px', fontSize: '0.95rem', width: 260, borderRight: '1px solid #f3eef9'}}>Attachments</th>
+                        <th style={{padding: '12px 8px', fontSize: '0.95rem',width: 260, borderRight: '1px solid #f3eef9'}}>Subcontractors</th>
                         <th style={{padding: '12px 8px', fontSize: '0.95rem', width: 150}}>Actions</th>
                       </tr>
                     </thead>
                     <tbody>
                       {deliverables.length === 0 && (
                         <tr>
-                          <td colSpan={4} style={{padding: 18, color: '#9ca3af'}}>No deliverables yet. Use the form above to add one.</td>
+                          <td colSpan={5} style={{padding: 24, color: '#9ca3af'}}>No deliverables yet. Use the form above to add one.</td>
                         </tr>
                       )}
                       {deliverables.map(d => (
                         <tr key={d.id} style={{borderBottom: '1px solid #fbfbff'}}>
-                          <td style={{padding: 12, verticalAlign: 'top', maxWidth: '100%', whiteSpace: 'pre-wrap', wordBreak: 'break-word'}}>
+                          <td style={{padding: 12, verticalAlign: 'top', width: 260, minWidth: 200, maxWidth: 420, whiteSpace: 'pre-wrap', wordBreak: 'break-word', borderRight: '1px solid #f6f2fb'}}>
                             {editingRowId === d.id ? (
-                              <textarea value={editingDesc} onChange={e => setEditingDesc(e.target.value)} rows={4} style={{padding: 8, borderRadius: 8, border: '1px solid #eef2ff', width: '100%', minHeight: 120, resize: 'vertical', fontSize: '1rem'}} />
+                              <input value={editingTitle} onChange={e => setEditingTitle(e.target.value)} style={{width: '100%', padding: 8}} />
+                            ) : (
+                              <div style={{fontWeight: 700}}>{d.title}</div>
+                            )}
+                          </td>
+
+                          <td style={{padding: 12, verticalAlign: 'top', width: 260, minWidth: 200, maxWidth: 420, whiteSpace: 'pre-wrap', wordBreak: 'break-word', borderRight: '1px solid #f6f2fb'}}>
+                            {editingRowId === d.id ? (
+                              <textarea value={editingDesc} onChange={e => setEditingDesc(e.target.value)} rows={3} style={{padding: 8, borderRadius: 8, border: '1px solid #eef2ff', width: '100%', minHeight: 80, resize: 'vertical', fontSize: '1rem'}} />
                             ) : (
                               <div style={{color: '#374151', fontSize: '1rem', lineHeight: 1.5}}>{d.description}</div>
                             )}
                           </td>
-                          <td style={{padding: 12, verticalAlign: 'top'}}>
-                            {d.attachment ? (
-                              <a href={d.attachment.url} target="_blank" rel="noopener noreferrer" style={{fontSize: '0.95rem', color: '#5b4fff', textDecoration: 'none', background: '#f4f4ff', padding: '6px 10px', borderRadius: 8}}>
-                                {d.attachment.name}
-                              </a>
+
+                          <td style={{padding: 12, verticalAlign: 'top', width: 260, minWidth: 200, maxWidth: 420, whiteSpace: 'pre-wrap', wordBreak: 'break-word', borderRight: '1px solid #f6f2fb'}}>
+                            {d.attachments && d.attachments.length > 0 ? (
+                              <div style={{display: 'flex', gap: 8, flexWrap: 'wrap'}}>
+                                {d.attachments.map((a, idx) => (
+                                  <a key={idx} href={a.url} target="_blank" rel="noreferrer" style={{fontSize: '0.95rem', color: '#5b4fff', textDecoration: 'none', background: '#f4f4ff', padding: '6px 10px', borderRadius: 8}}>
+                                    📎 {a.name}
+                                  </a>
+                                ))}
+                              </div>
                             ) : (
                               <span style={{color: '#9ca3af'}}>—</span>
                             )}
                           </td>
-                          <td style={{padding: 12, verticalAlign: 'top'}}>
+
+                          <td style={{padding: 12, verticalAlign: 'top', width: 260, minWidth: 200, maxWidth: 420, whiteSpace: 'pre-wrap', wordBreak: 'break-word'}}>
                             {editingRowId === d.id ? (
                               <div style={{display: 'flex', gap: 8, flexWrap: 'wrap'}}>
                                 {subcontractors.map((s, i) => (
@@ -497,7 +577,7 @@ export default function RFQDetail() {
                               </div>
                             )}
                           </td>
-                          <td style={{padding: 12, verticalAlign: 'top'}}>
+                          <td style={{padding: 12, verticalAlign: 'top', width: 260, minWidth: 200, maxWidth: 420, whiteSpace: 'pre-wrap', wordBreak: 'break-word'}}>
                             {editingRowId === d.id ? (
                               <div style={{display: 'flex', gap: 8}}>
                                 <button onClick={() => saveEditRow(d.id)} style={{background: '#5b4fff', color: '#fff', border: 'none', padding: '8px 10px', borderRadius: 8, cursor: 'pointer'}}>Save</button>
@@ -526,7 +606,7 @@ export default function RFQDetail() {
                   <table style={{width: '100%', borderCollapse: 'collapse'}}>
                     <thead>
                       <tr style={{textAlign:'left', borderBottom:'1px solid #f0f0ff'}}>
-                        <th style={{padding:'12px 8px', fontSize:'0.95rem'}}>Description</th>
+                        <th style={{padding:'12px 8px', fontSize:'0.95rem', borderRight: '1px solid #f3eef9'}}>Description</th>
                         <th style={{padding:'12px 8px', fontSize:'0.95rem'}}>Attachment</th>
                       </tr>
                     </thead>
@@ -543,7 +623,13 @@ export default function RFQDetail() {
                         assignedDeliverables.map(d => (
                           <tr key={d.id} style={{borderBottom:'1px solid #fbfbff'}}>
                             <td style={{padding:12}}><div style={{whiteSpace:'pre-wrap',lineHeight:1.6,color:'#374151'}}>{d.description}</div></td>
-                            <td style={{padding:12}}>{d.attachment ? (
+                            <td style={{padding:12}}>{(d.attachments && d.attachments.length > 0) ? (
+                              <div style={{display: 'flex', gap: 8, flexWrap: 'wrap'}}>
+                                {d.attachments.map((a, idx) => (
+                                  <a key={idx} href={a.url} target="_blank" rel="noopener noreferrer" style={{color:'#5b4fff', textDecoration:'none', background:'#f4f4ff', padding:'6px 10px', borderRadius:8}}>{a.name}</a>
+                                ))}
+                              </div>
+                            ) : d.attachment ? (
                               <a href={d.attachment.url} target="_blank" rel="noopener noreferrer" style={{color:'#5b4fff', textDecoration:'none', background:'#f4f4ff', padding:'6px 10px', borderRadius:8}}>{d.attachment.name}</a>
                             ) : <span style={{color:'#9ca3af'}}>—</span>}</td>
                           </tr>
@@ -617,16 +703,16 @@ export default function RFQDetail() {
           </div>
         </div>
       </div>
-      <div style={{ flex: 1, maxWidth: 340 }}>
-        <div style={{ background: '#fff', borderRadius: 18, boxShadow: '0 2px 12px 0 rgba(80,80,120,0.06)', padding: '32px 28px', marginBottom: 18 }}>
-          <div style={{ fontWeight: 700, fontSize: '1.25rem', marginBottom: 18 }}>Assign RFQ</div>
-          <div style={{ marginBottom: 24 }}>
-            <label style={{ fontWeight: 500, color: '#757575', fontSize: '1.08rem', display: 'block', marginBottom: 8 }}>Assign to Project Manager:</label>
+      <div style={{ flex: 1, maxWidth: 380, position: 'relative' }}>
+        <div style={{ background: '#fff', borderRadius: 18, boxShadow: '0 8px 30px rgba(124,58,237,0.06)', padding: 28, marginBottom: 24, minHeight: 220, position: 'sticky', top: 32 }}>
+          <div style={{ fontWeight: 800, fontSize: '1.15rem', marginBottom: 12, color: '#12263a' }}>Assign RFQ</div>
+          <div style={{ marginBottom: 8 }}>
+            <label style={{ fontWeight: 600, color: '#6b7280', fontSize: '0.95rem', display: 'block', marginBottom: 10 }}>Assign to Project Manager</label>
             <select
               value={selectedPM}
               onChange={e => setSelectedPM(e.target.value)}
               disabled={!!assignedPM}
-              style={{ width: '100%', padding: '10px', borderRadius: 8, border: '1.5px solid #e0e7ff', fontSize: '1.05rem', marginBottom: 12 }}
+              style={{ width: '100%', padding: '12px 14px', borderRadius: 10, border: '1.5px solid #e6e7ff', fontSize: '1rem', marginBottom: 14, background: '#ffffff' }}
             >
               <option value="">Select Project Manager</option>
               <option value="John Doe">John Doe</option>
@@ -639,7 +725,7 @@ export default function RFQDetail() {
                 setAssignedPM(selectedPM);
               }}
               disabled={!!assignedPM || !selectedPM}
-              style={{ background: assignedPM ? '#a3a0f7' : '#5b4fff', color: '#fff', border: 'none', borderRadius: 8, padding: '10px 0', fontWeight: 600, fontSize: '1.05rem', cursor: assignedPM ? 'default' : 'pointer', width: '100%' }}
+              style={{ display: 'block', width: '100%', padding: '12px 14px', borderRadius: 10, background: assignedPM ? 'linear-gradient(90deg,#9aa0ff,#bdaeff)' : 'linear-gradient(90deg,#5b4fff,#7c5bff)', color: '#fff', border: 'none', fontWeight: 700, fontSize: '1rem', cursor: assignedPM ? 'default' : 'pointer', boxShadow: '0 6px 18px rgba(91,79,255,0.12)' }}
             >
               {assignedPM ? 'Assigned' : 'Assign to Project Manager'}
             </button>
