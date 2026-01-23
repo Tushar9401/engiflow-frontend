@@ -42,16 +42,26 @@ export default function DashboardHome() {
         <div className="recent-column">
           <h3 className="section-label">Recent Activities</h3>
           <div className="activities-list">
-            {activities.map(a => (
-              <div className="activity-item" key={a.id}>
-                <div className="activity-icon">{a.icon}</div>
-                <div className="activity-body">
-                  <div className="activity-title">{a.title}</div>
-                  <div className="activity-sub">{a.subtitle}</div>
-                </div>
-                <div className="activity-time">{a.time}</div>
-              </div>
-            ))}
+            <table className="activities-table" style={{ width: '100%', borderCollapse: 'collapse' }}>
+              <thead>
+                <tr>
+                  <th style={{ textAlign: 'left', padding: '8px' }}>ID</th>
+                  <th style={{ textAlign: 'left', padding: '8px' }}>Title</th>
+                  <th style={{ textAlign: 'left', padding: '8px' }}>Details</th>
+                  <th style={{ textAlign: 'left', padding: '8px', width: '140px' }}>Time</th>
+                </tr>
+              </thead>
+              <tbody>
+                {activities.map(a => (
+                  <tr key={a.id} className="activity-row">
+                    <td style={{ padding: '10px 8px' }}>{a.id}</td>
+                    <td style={{ padding: '10px 8px' }}>{a.title}</td>
+                    <td style={{ padding: '10px 8px' }}>{a.subtitle}</td>
+                    <td style={{ padding: '10px 8px' }}>{a.time}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </div>
 
