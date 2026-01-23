@@ -81,21 +81,29 @@ export default function SubcontractorDashboard() {
           </div>
         </div>
 
-        <div className="deliverables-table">
-          <div className="table-head">
-            <div>ID</div>
-            <div>Title</div>
-            <div className="desc-col">Description</div>
-            {/* <div>Due</div> */}
-          </div>
-          {deliverables.map(d => (
-            <div key={d.id} className="table-row" style={{ cursor: 'pointer' }} onClick={() => navigate(`/rfq/${d.id}?panel=subcontractor`, { state: { panel: 'subcontractor', subcontractor: company } })}>
-              <div className="id-col">{d.id}</div>
-              <div className="title-col">{d.title}</div>
-              <div className="desc-col"><div className="desc-text">{d.description}</div></div>
-              {/* <div>{d.due}</div> */}
-            </div>
-          ))}
+        <div className="deliverables-table" style={{ overflowX: 'auto' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+            <thead>
+              <tr className="table-head">
+                <th style={{ textAlign: 'left', padding: '12px 8px' }}>ID</th>
+                <th style={{ textAlign: 'left', padding: '12px 8px' }}>Title</th>
+                <th style={{ textAlign: 'left', padding: '12px 8px' }}>Description</th>
+                <th style={{ textAlign: 'left', padding: '12px 8px' }}>Status</th>
+                <th style={{ textAlign: 'left', padding: '12px 8px' }}>Due</th>
+              </tr>
+            </thead>
+            <tbody>
+              {deliverables.map(d => (
+                  <tr key={d.id} className="table-row" style={{ cursor: 'pointer' }} onClick={() => navigate(`/rfq/${d.id}?panel=subcontractor`, { state: { panel: 'subcontractor', subcontractor: company } })}>
+                  <td className="id-col" style={{ padding: '12px 8px', borderTop: '1px solid #f1f5f9' }}>{d.id}</td>
+                  <td className="title-col" style={{ padding: '12px 8px', borderTop: '1px solid #f1f5f9' }}>{d.title}</td>
+                  <td className="desc-col" style={{ padding: '12px 8px', borderTop: '1px solid #f1f5f9' }}><div className="desc-text">{d.description}</div></td>
+                  <td className="desc-col" style={{ padding: '12px 8px', borderTop: '1px solid #f1f5f9' }}><div className="desc-text">{d.status}</div></td>
+                  <td className="desc-col" style={{ padding: '12px 8px', borderTop: '1px solid #f1f5f9' }}><div className="desc-text">{d.due}</div></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
         </section>
 
