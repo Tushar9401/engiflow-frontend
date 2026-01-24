@@ -8,6 +8,14 @@ export default function DashboardLayout() {
   const [rfqDescription, setRfqDescription] = useState('');
   const [rfqFiles, setRfqFiles] = useState(null);
   const [rfqCloseDate, setRfqCloseDate] = useState('');
+  const [rfqStreet, setRfqStreet] = useState('');
+  const [rfqCity, setRfqCity] = useState('');
+  const [rfqStateVal, setRfqStateVal] = useState('');
+  const [rfqZip, setRfqZip] = useState('');
+  const [rfqServiceType, setRfqServiceType] = useState('Structural');
+  const structuralServices = ['Steel Fabrication', 'Structural Analysis', 'Beam & Column Design', 'Reinforcement Detailing'];
+  const civilServices = ['Cement Work', 'Formwork', 'Earthworks', 'Drainage Design'];
+  const [rfqSelectedServices, setRfqSelectedServices] = useState([]);
 
   function openRFQModal() {
     setShowRFQModal(true);
@@ -19,12 +27,18 @@ export default function DashboardLayout() {
     setRfqDescription('');
     setRfqFiles(null);
     setRfqCloseDate('');
+    setRfqStreet('');
+    setRfqCity('');
+    setRfqStateVal('');
+    setRfqZip('');
+    setRfqServiceType('Structural');
+    setRfqSelectedServices([]);
   }
 
   function handleRFQSubmit(e) {
     e.preventDefault();
     // For now just close the modal. Replace with API call as needed.
-    console.log('Submitting RFQ', { title: rfqTitle, description: rfqDescription, closeDate: rfqCloseDate, files: rfqFiles });
+    console.log('Submitting RFQ', { title: rfqTitle, description: rfqDescription, closeDate: rfqCloseDate, files: rfqFiles, serviceType: rfqServiceType, services: rfqSelectedServices, address: { street: rfqStreet, city: rfqCity, state: rfqStateVal, zip: rfqZip } });
     closeRFQModal();
   }
 
@@ -100,6 +114,34 @@ export default function DashboardLayout() {
             </div>
 
             <form onSubmit={handleRFQSubmit}>
+              {/* Service selection (top) */}
+              <div className="rfq-service-section">
+                <label className="rfq-service-label">Service Type</label>
+                <div className="rfq-service-type-row">
+                  <div className="rfq-type-select">
+                    <select value={rfqServiceType} onChange={e => setRfqServiceType(e.target.value)} className="rfq-type-select-input">
+                      <option value="Structural">Structural</option>
+                      <option value="Civil">Civil</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className="rfq-service-pills">
+                  {(rfqServiceType === 'Structural' ? structuralServices : civilServices).map(s => {
+                    const checked = rfqSelectedServices.includes(s);
+                    return (
+                      <label key={s} className={"rfq-service-pill" + (checked ? ' checked' : '')}>
+                        <input type="checkbox" checked={checked} onChange={(e) => {
+                          if (e.target.checked) setRfqSelectedServices(prev => [...prev, s]);
+                          else setRfqSelectedServices(prev => prev.filter(x => x !== s));
+                        }} />
+                        <span className="rfq-service-pill-text">{s}</span>
+                      </label>
+                    )
+                  })}
+                </div>
+              </div>
+
               {/* Title */}
               <div style={{marginBottom: 18}}>
                 <label style={{display: 'block', fontWeight: 600, color: '#4c1d95', marginBottom: 8}}>Title</label>
@@ -110,6 +152,18 @@ export default function DashboardLayout() {
               <div style={{marginBottom: 18}}>
                 <label style={{display: 'block', fontWeight: 600, color: '#4c1d95', marginBottom: 8}}>Description</label>
                 <textarea value={rfqDescription} onChange={e => setRfqDescription(e.target.value)} placeholder="Description" style={{width: '100%', padding: '14px', borderRadius: 10, border: '1.5px solid #e6e9ff', fontSize: '1rem', minHeight: 120}} />
+              </div>
+
+              {/* Address */}
+              <div style={{marginBottom: 18}}>
+                <label style={{display: 'block', fontWeight: 600, color: '#4c1d95', marginBottom: 8}}>Address</label>
+                <input value={rfqStreet} onChange={e => setRfqStreet(e.target.value)} type="text" placeholder="Street address" style={{width: '100%', padding: '12px', borderRadius: 10, border: '1.5px solid #e6e9ff', fontSize: '1rem', marginBottom: 8}} />
+
+                <div style={{display: 'flex', gap: 8, flexWrap: 'wrap'}}>
+                  <input value={rfqCity} onChange={e => setRfqCity(e.target.value)} type="text" placeholder="City" style={{flex: '1 1 160px', padding: '12px', borderRadius: 10, border: '1.5px solid #e6e9ff', fontSize: '1rem'}} />
+                  <input value={rfqStateVal} onChange={e => setRfqStateVal(e.target.value)} type="text" placeholder="State" style={{flex: '0 0 120px', padding: '12px', borderRadius: 10, border: '1.5px solid #e6e9ff', fontSize: '1rem'}} />
+                  <input value={rfqZip} onChange={e => setRfqZip(e.target.value)} type="text" placeholder="ZIP" style={{flex: '0 0 120px', padding: '12px', borderRadius: 10, border: '1.5px solid #e6e9ff', fontSize: '1rem'}} />
+                </div>
               </div>
 
               {/* Expected Close Date */}
