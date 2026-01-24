@@ -40,6 +40,7 @@ export default function RFQDetail() {
     { user: 'Admin', text: 'Please review the attached documents.', attachment: null, recipient: 'All' },
     { user: 'Project Manager', text: 'Documents received, will update soon.', attachment: null, recipient: 'All' },
   ]);
+  const [activeTab, setActiveTab] = useState('comments'); // 'comments' | 'files'
   const [commentText, setCommentText] = useState('');
   const [commentFile, setCommentFile] = useState(null);
   const [commentFileUrl, setCommentFileUrl] = useState(null);
@@ -647,7 +648,13 @@ export default function RFQDetail() {
         <div style={{width: '100%', maxWidth: 800, margin: '24px auto 0 auto'}}>
           <div className="rfq-comments-panel" style={{borderRadius: 18, boxShadow: '0 2px 12px 0 rgba(80,80,120,0.06)', padding: '20px 22px'}}>
             <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12}}>
-              <div style={{fontWeight: 700, fontSize: '1.18rem'}}>Comments</div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                <div style={{fontWeight: 700, fontSize: '1.18rem'}}>Comments</div>
+                <div style={{ display: 'flex', gap: 8, background: 'transparent', padding: 4, borderRadius: 8 }}>
+                  <button type="button" onClick={() => setActiveTab('comments')} style={{ padding: '6px 10px', borderRadius: 8, border: 'none', background: activeTab === 'comments' ? 'linear-gradient(90deg,#5b4fff,#7c5bff)' : 'transparent', color: activeTab === 'comments' ? '#fff' : '#6b7280', cursor: 'pointer', fontWeight: 700 }}>Comments</button>
+                  <button type="button" onClick={() => setActiveTab('files')} style={{ padding: '6px 10px', borderRadius: 8, border: 'none', background: activeTab === 'files' ? 'linear-gradient(90deg,#5b4fff,#7c5bff)' : 'transparent', color: activeTab === 'files' ? '#fff' : '#6b7280', cursor: 'pointer', fontWeight: 700 }}>Files</button>
+                </div>
+              </div>
               {(panel === 'admin' || panel === 'pm') && (
                 <div style={{display: 'flex', alignItems: 'center', gap: 8}}>
                   <label htmlFor="comment-recipient" style={{fontSize: '0.95rem', color: '#6b7280'}}>Send to</label>
@@ -662,33 +669,56 @@ export default function RFQDetail() {
                 </div>
               )}
             </div>
-            <div ref={commentsRef} className="comments-list" style={{marginBottom: 18}}>
-              {comments.map((c, i) => (
-                <div key={i} className={`comment-item ${c.user === 'Admin' ? 'admin' : c.user === 'Project Manager' ? 'pm' : 'you'}`}>
-                  <div style={{minWidth: 90, display: 'flex', alignItems: 'center'}}>
-                    <div style={{display: 'flex', flexDirection: 'column'}}>
-                      <span className="comment-user" style={{fontWeight: 800, fontSize: '0.96rem', color: c.user === 'Admin' ? '#4c2fc9' : c.user === 'Project Manager' ? '#0ea57a' : '#111827'}}>{c.user}</span>
-                      {c.recipient && c.recipient !== 'All' && (
-                        <span className="comment-recipient" style={{fontSize: '0.82rem', color: '#6b7280', marginTop: 4}}>to {c.recipient}</span>
-                      )}
+
+            {activeTab === 'comments' ? (
+              <div ref={commentsRef} className="comments-list" style={{marginBottom: 18}}>
+                {comments.map((c, i) => (
+                  <div key={i} className={`comment-item ${c.user === 'Admin' ? 'admin' : c.user === 'Project Manager' ? 'pm' : 'you'}`}>
+                    <div style={{minWidth: 90, display: 'flex', alignItems: 'center'}}>
+                      <div style={{display: 'flex', flexDirection: 'column'}}>
+                        <span className="comment-user" style={{fontWeight: 800, fontSize: '0.96rem', color: c.user === 'Admin' ? '#4c2fc9' : c.user === 'Project Manager' ? '#0ea57a' : '#111827'}}>{c.user}</span>
+                        {c.recipient && c.recipient !== 'All' && (
+                          <span className="comment-recipient" style={{fontSize: '0.82rem', color: '#6b7280', marginTop: 4}}>to {c.recipient}</span>
+                        )}
+                      </div>
+                    </div>
+                    <div style={{flex: 1}}>
+                      <div className="comment-text" style={{color: '#374151', lineHeight: 1.6, wordBreak: 'break-word'}}>{c.text}</div>
+                      <div style={{marginTop: 8}}>
+                        {c.attachment && c.attachment.type && c.attachment.type.startsWith('image') && (
+                          <img src={c.attachment.url} alt="comment attachment" className="comment-attachment" style={{maxHeight: 52, borderRadius: 8}} />
+                        )}
+                        {c.attachment && c.attachment.type === 'application/pdf' && (
+                          <a href={c.attachment.url} target="_blank" rel="noopener noreferrer" style={{marginLeft: 0, color: '#5b4fff', textDecoration: 'underline', fontSize: '0.98em'}}>
+                            <span role="img" aria-label="pdf">📄</span> {c.attachment.name}
+                          </a>
+                        )}
+                      </div>
                     </div>
                   </div>
-                  <div style={{flex: 1}}>
-                    <div className="comment-text" style={{color: '#374151', lineHeight: 1.6, wordBreak: 'break-word'}}>{c.text}</div>
-                    <div style={{marginTop: 8}}>
-                      {c.attachment && c.attachment.type && c.attachment.type.startsWith('image') && (
-                        <img src={c.attachment.url} alt="comment attachment" className="comment-attachment" style={{maxHeight: 52, borderRadius: 8}} />
-                      )}
-                      {c.attachment && c.attachment.type === 'application/pdf' && (
-                        <a href={c.attachment.url} target="_blank" rel="noopener noreferrer" style={{marginLeft: 0, color: '#5b4fff', textDecoration: 'underline', fontSize: '0.98em'}}>
-                          <span role="img" aria-label="pdf">📄</span> {c.attachment.name}
-                        </a>
-                      )}
+                ))}
+              </div>
+            ) : (
+              <div className="comments-list" style={{marginBottom: 18}}>
+                {(() => {
+                  const files = [];
+                  comments.forEach(c => { if (c.attachment && c.attachment.url) files.push({ name: c.attachment.name || 'Attachment', url: c.attachment.url, source: c.user, type: c.attachment.type }); });
+                  if (files.length === 0) return <div style={{ color: '#9ca3af' }}>No attached files</div>;
+                  return files.map((f, idx) => (
+                    <div key={idx} className="comment-item you" style={{ alignItems: 'center', gap: 14 }}>
+                      <div style={{ width: 44, height: 44, borderRadius: 8, background: 'rgba(99,102,241,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>📎</div>
+                      <div style={{ flex: 1 }}>
+                        <a href={f.url} target="_blank" rel="noreferrer" style={{ color: '#5b4fff', fontWeight: 700, textDecoration: 'none' }}>{f.name}</a>
+                        <div style={{ color: '#6b7280', marginTop: 6, fontSize: '0.95rem' }}>{f.source}</div>
+                      </div>
+                      <div>
+                        <a href={f.url} target="_blank" rel="noreferrer" className="btn" style={{ padding: '8px 10px', borderRadius: 8, background: 'transparent', border: '1px solid #e6e9ff', color: '#5b4fff', textDecoration: 'none' }}>Open</a>
+                      </div>
                     </div>
-                  </div>
-                </div>
-              ))}
-            </div>
+                  ));
+                })()}
+              </div>
+            )}
             <form style={{display: 'flex', gap: 12, alignItems: 'flex-end'}} onSubmit={handleCommentSubmit}>
               <textarea className="comment-input" value={commentText} onChange={e => setCommentText(e.target.value)} placeholder="Add a comment..." style={{flex: 1, borderRadius: 10, border: '1.2px solid #eef2ff', padding: 14, fontSize: '1.05rem', resize: 'vertical', minHeight: 46, boxShadow: 'inset 0 1px 0 rgba(16,24,40,0.02)'}} />
               <label htmlFor="comment-attach" style={{cursor: 'pointer', display: 'flex', alignItems: 'center', marginRight: 8}} title="Attach file">

@@ -53,3 +53,15 @@
 .comment-input:focus { box-shadow: 0 8px 22px rgba(91,79,255,0.08); outline: none; }
 .comment-post-btn { transition: transform .08s ease; }
 .comment-post-btn:active { transform: translateY(1px); }
+
+/* Tabs for comments/files within the comments panel */
+.comments-tabs { display: flex; gap: 10px; margin-bottom: 12px; }
+.tab-btn { background: transparent; border: 0; padding: 8px 12px; border-radius: 10px; cursor: pointer; color: #6b7280; font-weight: 700; }
+.tab-btn.active { background: linear-gradient(90deg,#5b4fff,#7c5bff); color: #fff; box-shadow: 0 8px 20px rgba(92,80,255,0.12); }
+
+.files-list { display: flex; flex-direction: column; gap: 10px; max-height: 260px; overflow-y: auto; padding-right: 6px; }
+.file-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px; background: #fff; border-radius: 10px; border: 1px solid rgba(92,80,255,0.04); }
+.file-row .meta { display: flex; gap: 12px; align-items: center; }
+.file-name { font-weight: 700; color: #374151; }
+.file-source { font-size: 0.88rem; color: #9ca3af; }
+.file-actions a { color: #5b4fff; text-decoration: none; font-weight: 700; }

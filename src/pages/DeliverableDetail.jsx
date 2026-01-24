@@ -58,6 +58,7 @@ export default function DeliverableDetail() {
   const [commentFile, setCommentFile] = useState(null);
   const [commentFileUrl, setCommentFileUrl] = useState(null);
   const commentsRef = useRef(null);
+  const [activeTab, setActiveTab] = useState('comments');
 
   useEffect(() => {
     try {
@@ -158,37 +159,74 @@ export default function DeliverableDetail() {
                 <div style={{ fontWeight: 700, fontSize: '1.18rem' }}>Comments</div>
               </div>
 
-              <div ref={commentsRef} className="comments-list" style={{ marginBottom: 12 }}>
-                {comments.map((c, i) => (
-                  <div key={i} className={`comment-item ${c.user === 'Admin' ? 'admin' : c.user === 'Project Manager' ? 'pm' : 'you'}`}>
-                    <div style={{ minWidth: 90, display: 'flex', alignItems: 'center' }}>
-                      <div style={{ display: 'flex', flexDirection: 'column' }}>
-                        <span className="comment-user" style={{ fontWeight: 800, fontSize: '0.96rem', color: c.user === 'Admin' ? '#4c2fc9' : c.user === 'Project Manager' ? '#0ea57a' : '#111827' }}>{c.user}</span>
-                      </div>
-                    </div>
-                    <div style={{ flex: 1 }}>
-                      <div className="comment-text" style={{ color: '#374151', lineHeight: 1.6, wordBreak: 'break-word' }}>{c.text}</div>
-                      <div style={{ marginTop: 8 }}>
-                        {c.attachment && c.attachment.url && (
-                          <a href={c.attachment.url} target="_blank" rel="noreferrer" style={{ color: '#5b4fff', textDecoration: 'underline', fontSize: '0.98em' }}>{c.attachment.name || 'Attachment'}</a>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                ))}
+              <div className="comments-tabs">
+                <button className={`tab-btn ${activeTab === 'comments' ? 'active' : ''}`} onClick={() => setActiveTab('comments')}>Comments</button>
+                <button className={`tab-btn ${activeTab === 'files' ? 'active' : ''}`} onClick={() => setActiveTab('files')}>Files</button>
               </div>
 
-              <form style={{ display: 'flex', gap: 12, alignItems: 'flex-end' }} onSubmit={handleCommentSubmit}>
-                <textarea className="comment-input" value={commentText} onChange={e => setCommentText(e.target.value)} placeholder="Add a comment..." style={{ flex: 1, borderRadius: 10, border: '1.2px solid #eef2ff', padding: 14, fontSize: '1.02rem', resize: 'vertical', minHeight: 46 }} />
-                <label htmlFor="deliverable-comment-attach" style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', marginRight: 8 }} title="Attach file">
-                  <svg width="22" height="22" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ display: 'block' }}>
-                    <path d="M7.5 12.5L14.5 5.5M14.5 5.5V10.5M14.5 5.5H9.5" stroke="#5b4fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    <rect x="3.5" y="3.5" width="15" height="15" rx="4.5" stroke="#5b4fff" strokeWidth="2"/>
-                  </svg>
-                  <input id="deliverable-comment-attach" type="file" accept="image/*,application/pdf" onChange={handleFileChange} style={{ display: 'none' }} />
-                </label>
-                <button type="submit" className="comment-post-btn" style={{ background: 'linear-gradient(90deg,#5b4fff,#7c5bff)', color: '#fff', border: 'none', borderRadius: 10, padding: '10px 22px', fontWeight: 700, fontSize: '1.02rem', cursor: 'pointer', boxShadow: '0 6px 18px rgba(91,79,255,0.12)' }}>Post</button>
-              </form>
+              {activeTab === 'comments' ? (
+                <>
+                  <div ref={commentsRef} className="comments-list" style={{ marginBottom: 12 }}>
+                    {comments.map((c, i) => (
+                      <div key={i} className={`comment-item ${c.user === 'Admin' ? 'admin' : c.user === 'Project Manager' ? 'pm' : 'you'}`}>
+                        <div style={{ minWidth: 90, display: 'flex', alignItems: 'center' }}>
+                          <div style={{ display: 'flex', flexDirection: 'column' }}>
+                            <span className="comment-user" style={{ fontWeight: 800, fontSize: '0.96rem', color: c.user === 'Admin' ? '#4c2fc9' : c.user === 'Project Manager' ? '#0ea57a' : '#111827' }}>{c.user}</span>
+                          </div>
+                        </div>
+                        <div style={{ flex: 1 }}>
+                          <div className="comment-text" style={{ color: '#374151', lineHeight: 1.6, wordBreak: 'break-word' }}>{c.text}</div>
+                          <div style={{ marginTop: 8 }}>
+                            {c.attachment && c.attachment.url && (
+                              <a href={c.attachment.url} target="_blank" rel="noreferrer" style={{ color: '#5b4fff', textDecoration: 'underline', fontSize: '0.98em' }}>{c.attachment.name || 'Attachment'}</a>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  <form style={{ display: 'flex', gap: 12, alignItems: 'flex-end' }} onSubmit={handleCommentSubmit}>
+                    <textarea className="comment-input" value={commentText} onChange={e => setCommentText(e.target.value)} placeholder="Add a comment..." style={{ flex: 1, borderRadius: 10, border: '1.2px solid #eef2ff', padding: 14, fontSize: '1.02rem', resize: 'vertical', minHeight: 46 }} />
+                    <label htmlFor="deliverable-comment-attach" style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', marginRight: 8 }} title="Attach file">
+                      <svg width="22" height="22" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ display: 'block' }}>
+                        <path d="M7.5 12.5L14.5 5.5M14.5 5.5V10.5M14.5 5.5H9.5" stroke="#5b4fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        <rect x="3.5" y="3.5" width="15" height="15" rx="4.5" stroke="#5b4fff" strokeWidth="2"/>
+                      </svg>
+                      <input id="deliverable-comment-attach" type="file" accept="image/*,application/pdf" onChange={handleFileChange} style={{ display: 'none' }} />
+                    </label>
+                    <button type="submit" className="comment-post-btn" style={{ background: 'linear-gradient(90deg,#5b4fff,#7c5bff)', color: '#fff', border: 'none', borderRadius: 10, padding: '10px 22px', fontWeight: 700, fontSize: '1.02rem', cursor: 'pointer', boxShadow: '0 6px 18px rgba(91,79,255,0.12)' }}>Post</button>
+                  </form>
+                </>
+              ) : (
+                <div className="files-list">
+                  {(() => {
+                    const files = [];
+                    if (deliverable.attachments && Array.isArray(deliverable.attachments)) {
+                      deliverable.attachments.forEach(a => files.push({ name: a.name || 'Attachment', url: a.url, source: 'Deliverable' }));
+                    }
+                    comments.forEach((c, idx) => {
+                      if (c.attachment && c.attachment.url) {
+                        files.push({ name: c.attachment.name || `Comment-file-${idx+1}`, url: c.attachment.url, source: `Comment by ${c.user}` });
+                      }
+                    });
+                    if (files.length === 0) {
+                      return <div style={{ color: '#9ca3af' }}>No files attached yet.</div>;
+                    }
+                    return files.map((f, i) => (
+                      <div className="file-row" key={i}>
+                        <div className="meta">
+                          <div className="file-name">{f.name}</div>
+                          <div className="file-source">{f.source}</div>
+                        </div>
+                        <div className="file-actions">
+                          <a href={f.url} target="_blank" rel="noreferrer">Open</a>
+                        </div>
+                      </div>
+                    ));
+                  })()}
+                </div>
+              )}
             </div>
           </section>
   </div>
