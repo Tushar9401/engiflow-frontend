@@ -186,31 +186,46 @@ export default function DashboardLayout() {
                 <label style={{display: 'block', fontWeight: 600, color: '#4c1d95', marginBottom: 8}}>Address</label>
                 <input value={rfqStreet} onChange={e => setRfqStreet(e.target.value)} type="text" placeholder="Street address" style={{width: '100%', padding: '12px', borderRadius: 10, border: '1.5px solid #e6e9ff', fontSize: '1rem', marginBottom: 8}} />
 
-                <div style={{display: 'flex', gap: 8, flexWrap: 'wrap'}}>
-                  <input value={rfqCity} onChange={e => setRfqCity(e.target.value)} type="text" placeholder="City" style={{flex: '1 1 160px', padding: '12px', borderRadius: 10, border: '1.5px solid #e6e9ff', fontSize: '1rem'}} />
-                  <input value={rfqStateVal} onChange={e => setRfqStateVal(e.target.value)} type="text" placeholder="State" style={{flex: '0 0 120px', padding: '12px', borderRadius: 10, border: '1.5px solid #e6e9ff', fontSize: '1rem'}} />
-                  <input value={rfqZip} onChange={e => setRfqZip(e.target.value)} type="text" placeholder="ZIP" style={{flex: '0 0 120px', padding: '12px', borderRadius: 10, border: '1.5px solid #e6e9ff', fontSize: '1rem'}} />
-                </div>
-                <div style={{marginTop: 8}}>
-                  <select value={rfqCountry} onChange={e => setRfqCountry(e.target.value)} style={{width: '100%', padding: '12px', borderRadius: 10, border: '1.5px solid #e6e9ff', fontSize: '1rem'}}>
+                <div style={{display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center'}}>
+                  <input value={rfqCity} onChange={e => setRfqCity(e.target.value)} type="text" placeholder="City" style={{flex: '1 1 220px', padding: '12px', borderRadius: 10, border: '1.5px solid #e6e9ff', fontSize: '1rem', background: '#fff'}} />
+                  <input value={rfqStateVal} onChange={e => setRfqStateVal(e.target.value)} type="text" placeholder="State" style={{flex: '0 0 140px', padding: '12px', borderRadius: 10, border: '1.5px solid #e6e9ff', fontSize: '1rem', background: '#fff'}} />
+                  <select value={rfqCountry} onChange={e => setRfqCountry(e.target.value)} style={{flex: '0 0 200px', padding: '12px', borderRadius: 10, border: '1.5px solid #e6e9ff', fontSize: '1rem', background: '#fff'}}>
                     <option value="">Country</option>
                     {countries.map((c) => (
                       <option key={c} value={c}>{c}</option>
                     ))}
                   </select>
+                  <input value={rfqZip} onChange={e => setRfqZip(e.target.value)} type="text" placeholder="ZIP" style={{flex: '0 0 120px', padding: '12px', borderRadius: 10, border: '1.5px solid #e6e9ff', fontSize: '1rem', background: '#fff'}} />
                 </div>
               </div>
 
-              {/* Expected Close Date */}
-              <div style={{marginBottom: 18}}>
-                <label style={{display: 'block', fontWeight: 600, color: '#4c1d95', marginBottom: 8}}>End Date</label>
-                <input type="date" value={rfqCloseDate} onChange={e => setRfqCloseDate(e.target.value)} style={{width: '100%', padding: '12px', borderRadius: 10, border: '1.5px solid #e6e9ff', fontSize: '1rem'}} />
-              </div>
+              {/* Expected Close Date + Attachments - improved responsive layout */}
+              <div style={{display: 'flex', gap: 16, flexWrap: 'wrap', marginBottom: 18, alignItems: 'flex-start'}}>
+                <div style={{flex: '1 1 320px'}}>
+                  <label style={{display: 'block', fontWeight: 600, color: '#4c1d95', marginBottom: 8}}>End Date</label>
+                  <input type="date" value={rfqCloseDate} onChange={e => setRfqCloseDate(e.target.value)} style={{width: '100%', padding: '12px', borderRadius: 10, border: '1.5px solid #e6e9ff', fontSize: '1rem', background: '#fff'}} />
+                </div>
 
-              {/* Images / Files */}
-              <div style={{marginBottom: 24}}>
-                <label style={{display: 'block', fontWeight: 600, color: '#4c1d95', marginBottom: 8}}>Attachments</label>
-                <input type="file" accept="image/*,application/pdf" onChange={handleFilesChange} multiple style={{width: '100%', padding: '12px', borderRadius: 8, border: '1.5px solid #e6e9ff', background: '#fafbff'}} />
+                <div style={{flex: '1 1 320px'}}>
+                  <label style={{display: 'block', fontWeight: 600, color: '#4c1d95', marginBottom: 8}}>Attachments</label>
+                  <div style={{display: 'flex', gap: 8, alignItems: 'center'}}>
+                    <label htmlFor="rfq-attachments" style={{display: 'inline-flex', alignItems: 'center', gap: 8, padding: '10px 14px', borderRadius: 10, background: '#f8f6ff', cursor: 'pointer', border: '1px solid #e6e9ff'}}>
+                      📎 Choose Files
+                    </label>
+                    <div style={{flex: 1, color: '#6b7280'}}>
+                      {rfqFiles && rfqFiles.length > 0 ? (
+                        <div style={{display: 'flex', gap: 8, flexWrap: 'wrap'}}>
+                          {Array.from(rfqFiles).map((f, i) => (
+                            <div key={i} style={{background: '#f4f4ff', padding: '6px 10px', borderRadius: 8, fontSize: '0.9rem'}}>{f.name}</div>
+                          ))}
+                        </div>
+                      ) : (
+                        <div style={{color: '#9ca3af'}}>No files chosen</div>
+                      )}
+                    </div>
+                  </div>
+                  <input id="rfq-attachments" type="file" accept="image/*,application/pdf" onChange={handleFilesChange} multiple style={{display: 'none'}} />
+                </div>
               </div>
 
               <div style={{display: 'flex', justifyContent: 'flex-end', gap: 12}}>
