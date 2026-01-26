@@ -64,6 +64,8 @@ export default function RFQDetail() {
   const [editingAssigned, setEditingAssigned] = useState([]);
   const [subsOpen, setSubsOpen] = useState(false);
   const subsRef = useRef(null);
+  // per-row supplier selection state (temporary before finalizing)
+  const [selectedSupplierById, setSelectedSupplierById] = useState({});
   
 
   function toggleSubcontractorSelection(name) {
@@ -132,6 +134,18 @@ export default function RFQDetail() {
         assigned: assigned.includes(name) ? assigned.filter(n => n !== name) : [...assigned, name]
       };
     }));
+  }
+
+  function handleSelectSupplier(id, supplier) {
+    setSelectedSupplierById(prev => ({ ...prev, [id]: supplier }));
+  }
+
+  function finalizeSupplier(id) {
+    const supplier = selectedSupplierById[id];
+    if (!supplier) return;
+    setDeliverables(prev => prev.map(d => d.id === id ? ({ ...d, finalizedSupplier: supplier }) : d));
+    // Optionally clear the temporary selection (keeps it selected visually)
+    // setSelectedSupplierById(prev => { const next = { ...prev }; delete next[id]; return next; });
   }
 
   function handleCommentSubmit(e) {
@@ -519,13 +533,14 @@ export default function RFQDetail() {
                         <th style={{padding: '12px 8px', fontSize: '0.95rem',width: 260, borderRight: '1px solid #f3eef9'}}>Description</th>
                         <th style={{padding: '12px 8px', fontSize: '0.95rem', width: 260, borderRight: '1px solid #f3eef9'}}>Attachments</th>
                         <th style={{padding: '12px 8px', fontSize: '0.95rem',width: 260, borderRight: '1px solid #f3eef9'}}>Subcontractors</th>
+                         <th style={{padding: '12px 8px', fontSize: '0.95rem', width: 160, textAlign: 'center'}}>Finalize</th>
                         <th style={{padding: '12px 8px', fontSize: '0.95rem', width: 150}}>Actions</th>
                       </tr>
                     </thead>
                     <tbody>
                       {deliverables.length === 0 && (
                         <tr>
-                          <td colSpan={5} style={{padding: 24, color: '#9ca3af'}}>No deliverables yet. Use the form above to add one.</td>
+                          <td colSpan={6} style={{padding: 24, color: '#9ca3af'}}>No deliverables yet. Use the form above to add one.</td>
                         </tr>
                       )}
                       {deliverables.map(d => (
@@ -559,6 +574,7 @@ export default function RFQDetail() {
                               <span style={{color: '#9ca3af'}}>—</span>
                             )}
                           </td>
+                           
 
                           <td style={{padding: 12, verticalAlign: 'top', width: 260, minWidth: 200, maxWidth: 420, whiteSpace: 'pre-wrap', wordBreak: 'break-word'}}>
                             {editingRowId === d.id ? (
@@ -578,7 +594,30 @@ export default function RFQDetail() {
                               </div>
                             )}
                           </td>
-                          <td style={{padding: 12, verticalAlign: 'top', width: 260, minWidth: 200, maxWidth: 420, whiteSpace: 'pre-wrap', wordBreak: 'break-word'}}>
+                           {/* Finalize column */}
+                          <td style={{padding: 12, verticalAlign: 'top', width: 160, minWidth: 140, textAlign: 'center'}}>
+                            {d.assigned && d.assigned.length > 0 ? (
+                              !d.finalizedSupplier ? (
+                                <div style={{display: 'flex', gap: 8, justifyContent: 'center', alignItems: 'center'}}>
+                                  <select value={selectedSupplierById[d.id] || ''} onChange={e => handleSelectSupplier(d.id, e.target.value)} style={{padding: '8px 10px', borderRadius: 8, border: '1px solid #e6e6f8'}}>
+                                    <option value="">Select supplier…</option>
+                                    {d.assigned.map((s, idx) => (
+                                      <option key={idx} value={s}>{s}</option>
+                                    ))}
+                                  </select>
+                                  <button onClick={() => finalizeSupplier(d.id)} disabled={!selectedSupplierById[d.id]} style={{padding: '8px 10px', borderRadius: 8, background: selectedSupplierById[d.id] ? 'linear-gradient(90deg,#5b4fff,#7c5bff)' : '#f3f4f6', color: selectedSupplierById[d.id] ? '#fff' : '#9ca3af', border: 'none', cursor: selectedSupplierById[d.id] ? 'pointer' : 'default'}}>Finalize</button>
+                                </div>
+                              ) : (
+                                <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6}}>
+                                  <div style={{fontSize: '0.9rem', color: '#6b7280'}}>Finalized</div>
+                                  <div style={{background: '#eef2ff', color: '#4c51bf', padding: '6px 12px', borderRadius: 999, fontWeight: 700}}>{d.finalizedSupplier}</div>
+                                </div>
+                              )
+                            ) : (
+                              <div style={{color: '#9ca3af'}}>—</div>
+                            )}
+                          </td>
+                          <td style={{padding: 12, verticalAlign: 'top', width: 150, minWidth: 120}}>
                             {editingRowId === d.id ? (
                               <div style={{display: 'flex', gap: 8}}>
                                 <button onClick={() => saveEditRow(d.id)} style={{background: '#5b4fff', color: '#fff', border: 'none', padding: '8px 10px', borderRadius: 8, cursor: 'pointer'}}>Save</button>
@@ -733,52 +772,43 @@ export default function RFQDetail() {
           </div>
         </div>
       </div>
-      <div style={{ flex: 1, maxWidth: 380, position: 'relative' }}>
-        <div style={{ background: '#fff', borderRadius: 18, boxShadow: '0 8px 30px rgba(124,58,237,0.06)', padding: 28, marginBottom: 24, minHeight: 220, position: 'sticky', top: 32 }}>
-          <div style={{ fontWeight: 800, fontSize: '1.15rem', marginBottom: 12, color: '#12263a' }}>Assign RFQ</div>
-          <div style={{ marginBottom: 8 }}>
-            <label style={{ fontWeight: 600, color: '#6b7280', fontSize: '0.95rem', display: 'block', marginBottom: 10 }}>Assign to Project Manager</label>
-            <select
-              value={selectedPM}
-              onChange={e => setSelectedPM(e.target.value)}
-              disabled={!!assignedPM}
-              style={{ width: '100%', padding: '12px 14px', borderRadius: 10, border: '1.5px solid #e6e7ff', fontSize: '1rem', marginBottom: 14, background: '#ffffff' }}
-            >
-              <option value="">Select Project Manager</option>
-              <option value="John Doe">John Doe</option>
-              <option value="Jane Smith">Jane Smith</option>
-            </select>
+      {panel !== 'pm' && (
+        <div style={{ flex: 1, maxWidth: 380, position: 'relative' }}>
+          <div style={{ background: '#fff', borderRadius: 18, boxShadow: '0 8px 30px rgba(124,58,237,0.06)', padding: 28, marginBottom: 24, minHeight: 220, position: 'sticky', top: 32 }}>
+            <div style={{ fontWeight: 800, fontSize: '1.15rem', marginBottom: 12, color: '#12263a' }}>Assign RFQ</div>
+            <div style={{ marginBottom: 8 }}>
+              <label style={{ fontWeight: 600, color: '#6b7280', fontSize: '0.95rem', display: 'block', marginBottom: 10 }}>Assign to Project Manager</label>
+              <select
+                value={selectedPM}
+                onChange={e => setSelectedPM(e.target.value)}
+                disabled={!!assignedPM}
+                style={{ width: '100%', padding: '12px 14px', borderRadius: 10, border: '1.5px solid #e6e7ff', fontSize: '1rem', marginBottom: 14, background: '#ffffff' }}
+              >
+                <option value="">Select Project Manager</option>
+                <option value="John Doe">John Doe</option>
+                <option value="Jane Smith">Jane Smith</option>
+              </select>
 
-            <button
-              onClick={() => {
-                if (!selectedPM) return;
-                setAssignedPM(selectedPM);
-              }}
-              disabled={!!assignedPM || !selectedPM}
-              style={{ display: 'block', width: '100%', padding: '12px 14px', borderRadius: 10, background: assignedPM ? 'linear-gradient(90deg,#9aa0ff,#bdaeff)' : 'linear-gradient(90deg,#5b4fff,#7c5bff)', color: '#fff', border: 'none', fontWeight: 700, fontSize: '1rem', cursor: assignedPM ? 'default' : 'pointer', boxShadow: '0 6px 18px rgba(91,79,255,0.12)' }}
-            >
-              {assignedPM ? 'Assigned' : 'Assign to Project Manager'}
-            </button>
+              <button
+                onClick={() => {
+                  if (!selectedPM) return;
+                  setAssignedPM(selectedPM);
+                }}
+                disabled={!!assignedPM || !selectedPM}
+                style={{ display: 'block', width: '100%', padding: '12px 14px', borderRadius: 10, background: assignedPM ? 'linear-gradient(90deg,#9aa0ff,#bdaeff)' : 'linear-gradient(90deg,#5b4fff,#7c5bff)', color: '#fff', border: 'none', fontWeight: 700, fontSize: '1rem', cursor: assignedPM ? 'default' : 'pointer', boxShadow: '0 6px 18px rgba(91,79,255,0.12)' }}
+              >
+                {assignedPM ? 'Assigned' : 'Assign to Project Manager'}
+              </button>
 
-            {assignedPM && (
-              <div style={{ marginTop: 12, color: '#374151', fontWeight: 700 }}>
-                Assigned to: {assignedPM}
-              </div>
-            )}
+              {assignedPM && (
+                <div style={{ marginTop: 12, color: '#374151', fontWeight: 700 }}>
+                  Assigned to: {assignedPM}
+                </div>
+              )}
+            </div>
           </div>
-          {/* <div style={{ marginBottom: 0 }}>
-            <label style={{ fontWeight: 500, color: '#757575', fontSize: '1.08rem', display: 'block', marginBottom: 8 }}>Assign to Sub Contractor:</label>
-            <select style={{ width: '100%', padding: '10px', borderRadius: 8, border: '1.5px solid #e0e7ff', fontSize: '1.05rem', marginBottom: 12 }}>
-              <option>Select Sub Contractor</option>
-              <option>ABC Constructions</option>
-              <option>XYZ Subcontractors</option>
-            </select>
-            <button style={{ background: '#5b4fff', color: '#fff', border: 'none', borderRadius: 8, padding: '10px 0', fontWeight: 600, fontSize: '1.05rem', cursor: 'pointer', width: '100%' }}>Assign to Sub Contractor</button>
-          </div> */}
-
-          
         </div>
-      </div>
+      )}
     </div>
   );
 }

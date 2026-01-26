@@ -12,10 +12,36 @@ export default function DashboardLayout() {
   const [rfqCity, setRfqCity] = useState('');
   const [rfqStateVal, setRfqStateVal] = useState('');
   const [rfqZip, setRfqZip] = useState('');
+  const [rfqCountry, setRfqCountry] = useState('');
   const [rfqServiceType, setRfqServiceType] = useState('Structural');
   const structuralServices = ['Steel Fabrication', 'Structural Analysis', 'Beam & Column Design', 'Reinforcement Detailing'];
   const civilServices = ['Cement Work', 'Formwork', 'Earthworks', 'Drainage Design'];
   const [rfqSelectedServices, setRfqSelectedServices] = useState([]);
+  const countries = [
+    'Afghanistan','Albania','Algeria','Andorra','Angola','Antigua and Barbuda','Argentina','Armenia','Australia','Austria','Azerbaijan',
+    'Bahamas','Bahrain','Bangladesh','Barbados','Belarus','Belgium','Belize','Benin','Bhutan','Bolivia','Bosnia and Herzegovina','Botswana','Brazil','Brunei','Bulgaria','Burkina Faso','Burundi',
+    'Cabo Verde','Cambodia','Cameroon','Canada','Central African Republic','Chad','Chile','China','Colombia','Comoros','Congo, Republic of the','Congo, Democratic Republic of the','Costa Rica','Cote d\'Ivoire','Croatia','Cuba','Cyprus','Czech Republic',
+    'Denmark','Djibouti','Dominica','Dominican Republic',
+    'Ecuador','Egypt','El Salvador','Equatorial Guinea','Eritrea','Estonia','Eswatini','Ethiopia',
+    'Fiji','Finland','France',
+    'Gabon','Gambia','Georgia','Germany','Ghana','Greece','Grenada','Guatemala','Guinea','Guinea-Bissau','Guyana',
+    'Haiti','Honduras','Hungary',
+    'Iceland','India','Indonesia','Iran','Iraq','Ireland','Israel','Italy',
+    'Jamaica','Japan','Jordan',
+    'Kazakhstan','Kenya','Kiribati','Korea, North','Korea, South','Kosovo','Kuwait','Kyrgyzstan',
+    'Laos','Latvia','Lebanon','Lesotho','Liberia','Libya','Liechtenstein','Lithuania','Luxembourg',
+    'Madagascar','Malawi','Malaysia','Maldives','Mali','Malta','Marshall Islands','Mauritania','Mauritius','Mexico','Micronesia','Moldova','Monaco','Mongolia','Montenegro','Morocco','Mozambique','Myanmar',
+    'Namibia','Nauru','Nepal','Netherlands','New Zealand','Nicaragua','Niger','Nigeria','North Macedonia','Norway',
+    'Oman',
+    'Pakistan','Palau','Panama','Papua New Guinea','Paraguay','Peru','Philippines','Poland','Portugal',
+    'Qatar',
+    'Romania','Russia','Rwanda',
+    'Saint Kitts and Nevis','Saint Lucia','Saint Vincent and the Grenadines','Samoa','San Marino','Sao Tome and Principe','Saudi Arabia','Senegal','Serbia','Seychelles','Sierra Leone','Singapore','Slovakia','Slovenia','Solomon Islands','Somalia','South Africa','Spain','Sri Lanka','Sudan','Suriname','Sweden','Switzerland','Syria',
+    'Taiwan','Tajikistan','Tanzania','Thailand','Timor-Leste','Togo','Tonga','Trinidad and Tobago','Tunisia','Turkey','Turkmenistan','Tuvalu',
+    'Uganda','Ukraine','United Arab Emirates','United Kingdom','United States','Uruguay','Uzbekistan',
+    'Vanuatu','Vatican City','Venezuela','Vietnam',
+    'Yemen','Zambia','Zimbabwe'
+  ];
 
   function openRFQModal() {
     setShowRFQModal(true);
@@ -33,12 +59,13 @@ export default function DashboardLayout() {
     setRfqZip('');
     setRfqServiceType('Structural');
     setRfqSelectedServices([]);
+    setRfqCountry('');
   }
 
   function handleRFQSubmit(e) {
     e.preventDefault();
     // For now just close the modal. Replace with API call as needed.
-    console.log('Submitting RFQ', { title: rfqTitle, description: rfqDescription, closeDate: rfqCloseDate, files: rfqFiles, serviceType: rfqServiceType, services: rfqSelectedServices, address: { street: rfqStreet, city: rfqCity, state: rfqStateVal, zip: rfqZip } });
+    console.log('Submitting RFQ', { title: rfqTitle, description: rfqDescription, closeDate: rfqCloseDate, files: rfqFiles, serviceType: rfqServiceType, services: rfqSelectedServices, address: { street: rfqStreet, city: rfqCity, state: rfqStateVal, zip: rfqZip, country: rfqCountry } });
     closeRFQModal();
   }
 
@@ -163,6 +190,14 @@ export default function DashboardLayout() {
                   <input value={rfqCity} onChange={e => setRfqCity(e.target.value)} type="text" placeholder="City" style={{flex: '1 1 160px', padding: '12px', borderRadius: 10, border: '1.5px solid #e6e9ff', fontSize: '1rem'}} />
                   <input value={rfqStateVal} onChange={e => setRfqStateVal(e.target.value)} type="text" placeholder="State" style={{flex: '0 0 120px', padding: '12px', borderRadius: 10, border: '1.5px solid #e6e9ff', fontSize: '1rem'}} />
                   <input value={rfqZip} onChange={e => setRfqZip(e.target.value)} type="text" placeholder="ZIP" style={{flex: '0 0 120px', padding: '12px', borderRadius: 10, border: '1.5px solid #e6e9ff', fontSize: '1rem'}} />
+                </div>
+                <div style={{marginTop: 8}}>
+                  <select value={rfqCountry} onChange={e => setRfqCountry(e.target.value)} style={{width: '100%', padding: '12px', borderRadius: 10, border: '1.5px solid #e6e9ff', fontSize: '1rem'}}>
+                    <option value="">Country</option>
+                    {countries.map((c) => (
+                      <option key={c} value={c}>{c}</option>
+                    ))}
+                  </select>
                 </div>
               </div>
 
