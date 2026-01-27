@@ -37,8 +37,8 @@ export default function RFQDetail() {
 
   // Comment state
   const [comments, setComments] = useState([
-    { user: 'Admin', text: 'Please review the attached documents.', attachment: null, recipient: 'All' },
-    { user: 'Project Manager', text: 'Documents received, will update soon.', attachment: null, recipient: 'All' },
+    { user: 'Admin', text: 'Please review the attached documents.', attachment: null, recipient: 'All', time: new Date('2026-01-11T09:30:00').toISOString() },
+    { user: 'Project Manager', text: 'Documents received, will update soon.', attachment: null, recipient: 'All', time: new Date('2026-01-11T10:05:00').toISOString() },
   ]);
   const [activeTab, setActiveTab] = useState('comments'); // 'comments' | 'files'
   const [commentText, setCommentText] = useState('');
@@ -164,6 +164,8 @@ export default function RFQDetail() {
               type: commentFile.type
             }
           : null
+      ,
+        time: new Date().toISOString()
       }
     ]);
     setCommentText('');
@@ -721,7 +723,7 @@ export default function RFQDetail() {
                         )}
                       </div>
                     </div>
-                    <div style={{flex: 1}}>
+                    <div className="comment-body" style={{flex: 1, position: 'relative'}}>
                       <div className="comment-text" style={{color: '#374151', lineHeight: 1.6, wordBreak: 'break-word'}}>{c.text}</div>
                       <div style={{marginTop: 8}}>
                         {c.attachment && c.attachment.type && c.attachment.type.startsWith('image') && (
@@ -733,6 +735,9 @@ export default function RFQDetail() {
                           </a>
                         )}
                       </div>
+                      {c.time && (
+                        <div className="comment-time" style={{position: 'absolute', right: 10, bottom: 8, fontSize: '0.82rem', color: '#9ca3af'}}>{new Date(c.time).toLocaleString()}</div>
+                      )}
                     </div>
                   </div>
                 ))}

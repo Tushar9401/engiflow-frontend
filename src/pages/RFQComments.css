@@ -49,6 +49,10 @@
 .comment-text { color: #374151; line-height: 1.6; }
 .comment-attachment img { max-height: 56px; border-radius: 8px; }
 
+/* Positioning for the comment body so the timestamp can sit bottom-right */
+.comment-body { position: relative; }
+.comment-time { position: absolute; right: 10px; bottom: 8px; font-size: 0.82rem; color: #9ca3af; }
+
 .comment-input { transition: box-shadow .15s ease; }
 .comment-input:focus { box-shadow: 0 8px 22px rgba(91,79,255,0.08); outline: none; }
 .comment-post-btn { transition: transform .08s ease; }
