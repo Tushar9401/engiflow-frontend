@@ -75,9 +75,9 @@ export default function SubcontractorDashboard() {
 
         <section className="deliverables-section">
         <div className="section-header">
-          <h2>Deliverables</h2>
+          <h2>Recent Activities</h2>
           <div className="section-actions">
-            <input placeholder="Search deliverables" className="search" />
+            <input placeholder="Search requests..." className="search" />
           </div>
         </div>
 

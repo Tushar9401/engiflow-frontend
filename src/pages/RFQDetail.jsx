@@ -58,6 +58,7 @@ export default function RFQDetail() {
   const [newDesc, setNewDesc] = useState('');
   const [newTitle, setNewTitle] = useState('');
   const [newAssignedSubs, setNewAssignedSubs] = useState([]);
+  const [newEndDate, setNewEndDate] = useState('');
   const [newAttachment, setNewAttachment] = useState([]);
   const [newAttachmentUrl, setNewAttachmentUrl] = useState([]);
   const [editingRowId, setEditingRowId] = useState(null);
@@ -68,6 +69,16 @@ export default function RFQDetail() {
   const subsRef = useRef(null);
   // per-row supplier selection state (temporary before finalizing)
   const [selectedSupplierById, setSelectedSupplierById] = useState({});
+  // per-row actions menu open state
+  const [openActionsId, setOpenActionsId] = useState(null);
+
+  function toggleActionsMenu(id) {
+    setOpenActionsId(prev => prev === id ? null : id);
+  }
+
+  function setFinalizedSupplierForRow(id, supplier) {
+    setDeliverables(prev => prev.map(d => d.id === id ? ({ ...d, finalizedSupplier: d.finalizedSupplier === supplier ? undefined : supplier }) : d));
+  }
   
 
   function toggleSubcontractorSelection(name) {
@@ -81,12 +92,15 @@ export default function RFQDetail() {
       title: newTitle || 'Untitled',
       description: newDesc,
       assigned: [...newAssignedSubs],
+      end_date: newEndDate || null,
+      assigned_date: (newAssignedSubs && newAssignedSubs.length > 0) ? new Date().toISOString() : null,
       attachments: (newAttachment && newAttachment.length > 0) ? newAttachment.map((f, i) => ({ name: f.name, url: newAttachmentUrl[i] || URL.createObjectURL(f), type: f.type })) : []
     };
     setDeliverables(prev => [d, ...prev]);
     setNewDesc('');
     setNewTitle('');
     setNewAssignedSubs([]);
+    setNewEndDate('');
     setNewAttachment([]);
     setNewAttachmentUrl([]);
   }
@@ -142,8 +156,9 @@ export default function RFQDetail() {
     setSelectedSupplierById(prev => ({ ...prev, [id]: supplier }));
   }
 
-  function finalizeSupplier(id) {
-    const supplier = selectedSupplierById[id];
+  function finalizeSupplier(id, supplierParam) {
+    // allow passing supplier via second arg (used by actions menu) or fall back to selectedSupplierById
+    const supplier = supplierParam || selectedSupplierById[id];
     if (!supplier) return;
     setDeliverables(prev => prev.map(d => d.id === id ? ({ ...d, finalizedSupplier: supplier }) : d));
     // Optionally clear the temporary selection (keeps it selected visually)
@@ -531,8 +546,13 @@ export default function RFQDetail() {
                       </div>
                     </div>
 
-                    <div style={{flex: '0 0 260px', display: 'flex', flexDirection: 'column', gap: 8}}>
-                      <div style={{fontSize: '0.9rem', color: '#6b7280'}}>Attachments</div>
+                    <div style={{flex: '0 0 200px', display: 'flex', flexDirection: 'column', gap: 8}}>
+                        <div style={{fontSize: '0.9rem', color: '#6b7280'}}>End Date</div>
+                        <input type="date" value={newEndDate} onChange={e => setNewEndDate(e.target.value)} style={{padding: '10px 12px', borderRadius: 10, border: '1px solid #eef2ff', background: '#fff'}} />
+                      </div>
+
+                      <div style={{flex: '0 0 260px', display: 'flex', flexDirection: 'column', gap: 8}}>
+                        <div style={{fontSize: '0.9rem', color: '#6b7280'}}>Attachments</div>
                       <div style={{display: 'flex', gap: 8, alignItems: 'center'}}>
                         <label htmlFor="deliverable-attach" style={{display: 'inline-flex', alignItems: 'center', gap: 8, padding: '10px 14px', borderRadius: 10, background: '#f8f6ff', cursor: 'pointer', border: '1px solid #eef2ff'}}>
                           📎 Attach files
@@ -555,35 +575,35 @@ export default function RFQDetail() {
                 </div>
 
                 {/* Table */}
-                <div style={{overflow: 'auto'}}>
-                  <table style={{width: '100%', borderCollapse: 'collapse'}}>
+                <div style={{overflowX: 'auto'}}>
+                  <table style={{width: '100%', borderCollapse: 'collapse', tableLayout: 'fixed'}}>
                     <thead>
                       <tr style={{textAlign: 'left', borderBottom: '1px solid #f0f0ff'}}>
-                        <th style={{padding: '12px 8px', fontSize: '0.95rem', width: 260, borderRight: '1px solid #f3eef9'}}>Title</th>
-                        <th style={{padding: '12px 8px', fontSize: '0.95rem',width: 260, borderRight: '1px solid #f3eef9'}}>Description</th>
-                        <th style={{padding: '12px 8px', fontSize: '0.95rem', width: 260, borderRight: '1px solid #f3eef9'}}>Attachments</th>
-                        <th style={{padding: '12px 8px', fontSize: '0.95rem',width: 260, borderRight: '1px solid #f3eef9'}}>Subcontractors</th>
-                         <th style={{padding: '12px 8px', fontSize: '0.95rem', width: 160, textAlign: 'center'}}>Finalize</th>
-                        <th style={{padding: '12px 8px', fontSize: '0.95rem', width: 150}}>Actions</th>
+                        <th style={{padding: '10px 8px', fontSize: '0.9rem', width: '18%', borderRight: '1px solid #f3eef9', minWidth: 140}}>Title</th>
+                        <th style={{padding: '10px 8px', fontSize: '0.9rem', width: '28%', borderRight: '1px solid #f3eef9', minWidth: 220}}>Description</th>
+                        <th style={{padding: '10px 8px', fontSize: '0.9rem', width: '12%', borderRight: '1px solid #f3eef9', minWidth: 120}}>Attachments</th>
+                        <th style={{padding: '10px 8px', fontSize: '0.9rem', width: '14%', borderRight: '1px solid #f3eef9', minWidth: 120}}>Subcontractors</th>
+                        <th style={{padding: '10px 8px', fontSize: '0.9rem', width: '6%', borderRight: '1px solid #f3eef9', minWidth: 90}}>Assigned Date</th>
+                        <th style={{padding: '10px 8px', fontSize: '0.9rem', width: '6%', borderRight: '1px solid #f3eef9', minWidth: 90}}>End Date</th>
+                        <th style={{padding: '10px 8px', fontSize: '0.9rem', width: '8%', minWidth: 90}}>Actions</th>
                       </tr>
                     </thead>
                     <tbody>
                       {deliverables.length === 0 && (
                         <tr>
-                          <td colSpan={6} style={{padding: 24, color: '#9ca3af'}}>No deliverables yet. Use the form above to add one.</td>
+                          <td colSpan={7} style={{padding: 24, color: '#9ca3af'}}>No deliverables yet. Use the form above to add one.</td>
                         </tr>
                       )}
                       {deliverables.map(d => (
                         <tr key={d.id} style={{borderBottom: '1px solid #fbfbff'}}>
-                          <td style={{padding: 12, verticalAlign: 'top', width: 260, minWidth: 200, maxWidth: 420, whiteSpace: 'pre-wrap', wordBreak: 'break-word', borderRight: '1px solid #f6f2fb'}}>
+                          <td style={{padding: '8px', verticalAlign: 'top', width: '18%', minWidth: 140, maxWidth: 420, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', borderRight: '1px solid #f6f2fb'}}>
                             {editingRowId === d.id ? (
                               <input value={editingTitle} onChange={e => setEditingTitle(e.target.value)} style={{width: '100%', padding: 8}} />
                             ) : (
                               <div style={{fontWeight: 700}}>{d.title}</div>
                             )}
                           </td>
-
-                          <td style={{padding: 12, verticalAlign: 'top', width: 260, minWidth: 200, maxWidth: 420, whiteSpace: 'pre-wrap', wordBreak: 'break-word', borderRight: '1px solid #f6f2fb'}}>
+                            <td style={{padding: '8px', verticalAlign: 'top', width: '28%', minWidth: 220, maxWidth: 420, whiteSpace: 'pre-wrap', wordBreak: 'break-word', borderRight: '1px solid #f6f2fb'}}>
                             {editingRowId === d.id ? (
                               <textarea value={editingDesc} onChange={e => setEditingDesc(e.target.value)} rows={3} style={{padding: 8, borderRadius: 8, border: '1px solid #eef2ff', width: '100%', minHeight: 80, resize: 'vertical', fontSize: '1rem'}} />
                             ) : (
@@ -591,22 +611,22 @@ export default function RFQDetail() {
                             )}
                           </td>
 
-                          <td style={{padding: 12, verticalAlign: 'top', width: 260, minWidth: 200, maxWidth: 420, whiteSpace: 'pre-wrap', wordBreak: 'break-word', borderRight: '1px solid #f6f2fb'}}>
+                            <td style={{padding: '8px', verticalAlign: 'top', width: '12%', minWidth: 120, maxWidth: 420, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', borderRight: '1px solid #f6f2fb'}}>
                             {d.attachments && d.attachments.length > 0 ? (
-                              <div style={{display: 'flex', gap: 8, flexWrap: 'wrap'}}>
-                                {d.attachments.map((a, idx) => (
-                                  <a key={idx} href={a.url} target="_blank" rel="noreferrer" style={{fontSize: '0.95rem', color: '#5b4fff', textDecoration: 'none', background: '#f4f4ff', padding: '6px 10px', borderRadius: 8}}>
-                                    📎 {a.name}
-                                  </a>
-                                ))}
-                              </div>
+                                <div style={{display: 'flex', gap: 8, flexWrap: 'nowrap', alignItems: 'center'}}>
+                                  {d.attachments.map((a, idx) => (
+                                    <a key={idx} href={a.url} target="_blank" rel="noreferrer" style={{fontSize: '0.88rem', color: '#5b4fff', textDecoration: 'none', background: '#f4f4ff', padding: '6px 8px', borderRadius: 8, display: 'inline-block', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 160}}>
+                                      📎 {a.name}
+                                    </a>
+                                  ))}
+                                </div>
                             ) : (
                               <span style={{color: '#9ca3af'}}>—</span>
                             )}
                           </td>
                            
 
-                          <td style={{padding: 12, verticalAlign: 'top', width: 260, minWidth: 200, maxWidth: 420, whiteSpace: 'pre-wrap', wordBreak: 'break-word'}}>
+                          <td style={{padding: '8px', verticalAlign: 'top', width: '14%', minWidth: 120, maxWidth: 520, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', borderRight: '1px solid #f6f2fb'}}>
                             {editingRowId === d.id ? (
                               <div style={{display: 'flex', gap: 8, flexWrap: 'wrap'}}>
                                 {subcontractors.map((s, i) => (
@@ -617,46 +637,34 @@ export default function RFQDetail() {
                                 ))}
                               </div>
                             ) : (
-                              <div style={{display: 'flex', gap: 8, flexWrap: 'wrap'}}>
-                                {(d.assigned && d.assigned.length > 0) ? d.assigned.map((s, idx) => (
-                                  <span key={idx} style={{background: '#eef2ff', color: '#4c51bf', padding: '6px 10px', borderRadius: 999, fontSize: '0.9rem'}}>{s}</span>
-                                )) : <span style={{color: '#9ca3af'}}>Not assigned</span>}
+                              <div style={{display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center'}}>
+                                {(d.assigned && d.assigned.length > 0) ? d.assigned.map((s, idx) => {
+                                  const isFinal = d.finalizedSupplier === s;
+                                  return (
+                                    <button key={idx} title={s} onClick={() => setFinalizedSupplierForRow(d.id, s)} style={{background: isFinal ? '#dcfce7' : '#eef2ff', color: isFinal ? '#166534' : '#4c51bf', padding: '6px 10px', borderRadius: 999, fontSize: '0.9rem', display: 'inline-block', maxWidth: 140, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', border: 'none', cursor: 'pointer'}}>{s}</button>
+                                  );
+                                }) : <span style={{color: '#9ca3af'}}>Not assigned</span>}
                               </div>
                             )}
                           </td>
-                           {/* Finalize column */}
-                          <td style={{padding: 12, verticalAlign: 'top', width: 160, minWidth: 140, textAlign: 'center'}}>
-                            {d.assigned && d.assigned.length > 0 ? (
-                              !d.finalizedSupplier ? (
-                                <div style={{display: 'flex', gap: 8, justifyContent: 'center', alignItems: 'center'}}>
-                                  <select value={selectedSupplierById[d.id] || ''} onChange={e => handleSelectSupplier(d.id, e.target.value)} style={{padding: '8px 10px', borderRadius: 8, border: '1px solid #e6e6f8'}}>
-                                    <option value="">Select supplier…</option>
-                                    {d.assigned.map((s, idx) => (
-                                      <option key={idx} value={s}>{s}</option>
-                                    ))}
-                                  </select>
-                                  <button onClick={() => finalizeSupplier(d.id)} disabled={!selectedSupplierById[d.id]} style={{padding: '8px 10px', borderRadius: 8, background: selectedSupplierById[d.id] ? 'linear-gradient(90deg,#5b4fff,#7c5bff)' : '#f3f4f6', color: selectedSupplierById[d.id] ? '#fff' : '#9ca3af', border: 'none', cursor: selectedSupplierById[d.id] ? 'pointer' : 'default'}}>Finalize</button>
-                                </div>
-                              ) : (
-                                <div style={{display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6}}>
-                                  <div style={{fontSize: '0.9rem', color: '#6b7280'}}>Finalized</div>
-                                  <div style={{background: '#eef2ff', color: '#4c51bf', padding: '6px 12px', borderRadius: 999, fontWeight: 700}}>{d.finalizedSupplier}</div>
-                                </div>
-                              )
-                            ) : (
-                              <div style={{color: '#9ca3af'}}>—</div>
-                            )}
-                          </td>
-                          <td style={{padding: 12, verticalAlign: 'top', width: 150, minWidth: 120}}>
+                            <td style={{padding: '6px 8px', verticalAlign: 'top', width: '6%', minWidth: 90, textAlign: 'center', borderRight: '1px solid #f6f2fb', fontSize: '0.9rem'}}>
+                              {d.assigned_date ? new Date(d.assigned_date).toLocaleDateString() : '—'}
+                            </td>
+
+                            <td style={{padding: '6px 8px', verticalAlign: 'top', width: '6%', minWidth: 90, textAlign: 'center', borderRight: '1px solid #f6f2fb', fontSize: '0.9rem'}}>
+                              {d.end_date ? new Date(d.end_date).toLocaleDateString() : '—'}
+                            </td>
+                          
+                          <td style={{padding: '8px', verticalAlign: 'top', width: '8%', minWidth: 120, textAlign: 'right'}}>
                             {editingRowId === d.id ? (
-                              <div style={{display: 'flex', gap: 8}}>
+                              <div style={{display: 'flex', gap: 8, justifyContent: 'flex-end'}}>
                                 <button onClick={() => saveEditRow(d.id)} style={{background: '#5b4fff', color: '#fff', border: 'none', padding: '8px 10px', borderRadius: 8, cursor: 'pointer'}}>Save</button>
                                 <button onClick={() => setEditingRowId(null)} style={{background: '#fff', border: '1px solid #e6e6f8', padding: '8px 10px', borderRadius: 8, cursor: 'pointer'}}>Cancel</button>
                               </div>
                             ) : (
-                              <div style={{display: 'flex', gap: 8}}>
-                                <button onClick={() => startEditRow(d)} style={{background: '#fff', border: '1px solid #e6e6f8', padding: '8px 10px', borderRadius: 8, cursor: 'pointer'}}>Edit</button>
-                                <button onClick={() => deleteDeliverable(d.id)} style={{background: '#fff', border: '1px solid #fde2e2', color: '#b91c1c', padding: '8px 10px', borderRadius: 8, cursor: 'pointer'}}>Delete</button>
+                              <div style={{display: 'flex', flexDirection: 'column', gap: 6, alignItems: 'flex-end'}}>
+                                <button onClick={() => startEditRow(d)} style={{background: '#fff', border: '1px solid #e6e6f8', padding: '6px 10px', borderRadius: 8, cursor: 'pointer', fontSize: '0.95rem'}}>Edit</button>
+                                <button onClick={() => deleteDeliverable(d.id)} style={{background: '#fff', border: '1px solid #fde2e2', color: '#b91c1c', padding: '6px 10px', borderRadius: 8, cursor: 'pointer', fontSize: '0.95rem'}}>Delete</button>
                               </div>
                             )}
                           </td>

@@ -27,13 +27,22 @@
 .stat-card .icon{width:56px;height:56px;border-radius:12px;display:flex;align-items:center;justify-content:center;background:#f2ecff;font-size:24px}
 .stat-label{font-size:16px;color:#6b7280}
 .stat-value-large{font-size:48px;font-weight:800;color:#0f172a;text-align:left}
-.deliverables-section{margin-top:8px}
-.section-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
-.search{padding:10px 12px;border-radius:10px;border:1px solid #eef2ff}
+.deliverables-section{
+	margin-top:8px;
+	background:#fff;
+	border-radius:22px;
+	padding:24px 26px 18px;
+	box-shadow:0 14px 40px rgba(78,70,255,0.08);
+	border:1px solid rgba(241,242,255,0.8);
+}
+.section-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+.section-header h2{margin:0;font-size:1.35rem;color:#1f2937;font-weight:700}
+.search{padding:10px 14px;border-radius:12px;border:1px solid #e6e6f8;background:#fff;min-width:240px}
 .deliverables-table table {
-  width: 100%;
-  border-collapse: collapse;
-  table-layout: fixed;
+	width: 100%;
+	border-collapse: separate;
+	border-spacing: 0 12px;
+	table-layout: fixed;
 }
 
 .deliverables-table thead tr,
@@ -43,12 +52,41 @@
 
 .deliverables-table th,
 .deliverables-table td {
-  display: table-cell !important;
-  vertical-align: middle;
+	display: table-cell !important;
+	vertical-align: middle;
 }
 
-.table-head{display:grid;grid-template-columns:140px 220px 1fr 120px;padding:12px 10px;border-bottom:1px solid #f4f6fb;font-weight:700;color:#123043;align-items:center}
-.table-row{display:grid;grid-template-columns:140px 220px 1fr 120px;padding:20px 12px;align-items:start;border-bottom:1px solid #fbfbff}
+.deliverables-table thead th{
+	color:#6b7280;
+	font-weight:600;
+	font-size:0.95rem;
+	border-bottom:1px solid #edf0ff;
+}
+
+.deliverables-table tbody tr{
+	background:#f7f8ff;
+}
+
+.deliverables-table tbody td{
+	padding:16px 14px;
+	border-top:1px solid #eff1ff;
+	border-bottom:1px solid #eff1ff;
+}
+
+.deliverables-table tbody td:first-child{
+	border-left:1px solid #eff1ff;
+	border-top-left-radius:14px;
+	border-bottom-left-radius:14px;
+}
+
+.deliverables-table tbody td:last-child{
+	border-right:1px solid #eff1ff;
+	border-top-right-radius:14px;
+	border-bottom-right-radius:14px;
+}
+
+.table-head{padding:12px 10px;border-bottom:1px solid #f4f6fb;font-weight:700;color:#123043;align-items:center}
+.table-row{padding:20px 12px;align-items:start;border-bottom:1px solid #fbfbff}
 .title-col{font-weight:700;color:#0f1724}
 .id-col{color:#374151;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:flex;align-items:center}
 .table-head > div:first-child, .table-row > div:first-child{padding-right:12px}

@@ -6,9 +6,9 @@ import './RFQComments.css';
 
 // Sample deliverables dataset (keep in sync with ActiveDeliverables until API integration)
 const allDeliverables = [
-  { id: 'DEL-2026-001', title: 'Foundation Drawings', description: 'Complete foundation drawings and rebar schedules', attachments: [{name:'foundations.pdf', url:'#'}], assigned: ['ABC Constructions'] },
-  { id: 'DEL-2026-002', title: 'Reinforcement Layout', description: 'Detailed reinforcement layout for ground floor slab', attachments: [], assigned: ['XYZ Subcontractors', 'ABC Constructions'] },
-  { id: 'DEL-2026-003', title: 'Temporary Works', description: 'Shoring and temporary works drawings', attachments: [{name:'shoring.pdf', url:'#'}], assigned: ['SubCo A'] },
+  { id: 'DEL-2026-001', title: 'Foundation Drawings', description: 'Complete foundation drawings and rebar schedules', attachments: [{name:'foundations.pdf', url:'#'}], assigned: ['ABC Constructions'], assigned_date: '2026-01-01', end_date: '2026-01-10' },
+  { id: 'DEL-2026-002', title: 'Reinforcement Layout', description: 'Detailed reinforcement layout for ground floor slab', attachments: [], assigned: ['XYZ Subcontractors', 'ABC Constructions'], assigned_date: '2026-01-05', end_date: '2026-01-18' },
+  { id: 'DEL-2026-003', title: 'Temporary Works', description: 'Shoring and temporary works drawings', attachments: [{name:'shoring.pdf', url:'#'}], assigned: ['SubCo A'], assigned_date: '2026-01-08', end_date: '2026-01-22' },
 ];
 
 export default function DeliverableDetail() {
@@ -108,6 +108,16 @@ export default function DeliverableDetail() {
     );
   }
 
+  const formatDisplayDate = (value) => {
+    if (!value) return '—';
+    const formatted = new Date(value).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+    return formatted.replace(', ', ',');
+  };
+
   return (
     <div className="rfq-detail-layout" style={{ display: 'flex', gap: '32px', padding: '32px 0', minHeight: '100vh', alignItems: 'flex-start', background: 'linear-gradient(160deg, #f3e8ff 0%, #f8fafc 100%)', width: '100%' }}>
   {renderSubcontractorSidebar()}
@@ -117,9 +127,25 @@ export default function DeliverableDetail() {
         </div>
   {/* main content sits directly on the pale-purple gradient (no outer white card) */}
   <div style={{ background: 'transparent', borderRadius: 0, padding: 0, boxShadow: 'none' }}>
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 8, marginBottom: 8 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 10, marginBottom: 8 }}>
             <span style={{ background: '#ede9fe', color: '#6366f1', fontWeight: 700, borderRadius: 8, padding: '6px 12px', fontSize: '0.95rem' }}>{deliverable.id}</span>
             <h1 style={{ margin: '6px 0 0 0', fontSize: '2.6rem', fontWeight: 800 }}>{deliverable.title}</h1>
+            <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap', marginTop: 4 }}>
+              <div style={{ background: '#f4f4ff', color: '#4f46e5', borderRadius: 16, padding: '10px 14px', minWidth: 210, display: 'flex', flexDirection: 'column', gap: 6 }}>
+                <div style={{ fontWeight: 700, fontSize: '0.82rem', color: '#6b7280' }}>Assigned Date</div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontWeight: 700 }}>
+                  <span role="img" aria-label="calendar">📅</span>
+                  {formatDisplayDate(deliverable.assigned_date)}
+                </div>
+              </div>
+              <div style={{ background: '#fff7f0', color: '#b85b00', borderRadius: 16, padding: '10px 14px', minWidth: 210, display: 'flex', flexDirection: 'column', gap: 6 }}>
+                <div style={{ fontWeight: 700, fontSize: '0.82rem', color: '#9a7a60' }}>End Date</div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontWeight: 700 }}>
+                  <span role="img" aria-label="hourglass">⏳</span>
+                  {formatDisplayDate(deliverable.end_date)}
+                </div>
+              </div>
+            </div>
           </div>
 
           <div style={{ marginTop: 18, background: '#fff', borderRadius: 12, maxWidth: 760 }}>
