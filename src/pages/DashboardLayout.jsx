@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { NavLink, Outlet, useNavigate } from 'react-router-dom'
+import { NavLink, Outlet, useNavigate, useLocation } from 'react-router-dom'
 import './Dashboard.css'
 
 export default function DashboardLayout() {
@@ -73,6 +73,8 @@ export default function DashboardLayout() {
     setRfqFiles(e.target.files);
   }
   const navigate = useNavigate()
+  const location = useLocation()
+  const hideWelcome = location.pathname.includes('request-quotation')
   React.useEffect(() => {
     if (localStorage.getItem('isLoggedIn') !== 'true') {
       navigate('/', { replace: true });
@@ -89,12 +91,12 @@ export default function DashboardLayout() {
                   <NavLink to="/dashboard" end className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}><span role="img" aria-label="home" style={{marginRight: '8px'}}>🏠</span>Home</NavLink>
                 </li> */}
                 <li className="dashboard-nav-item">
-                  <button className="nav-link" style={{width: '100%', textAlign: 'left', background: 'none', border: 'none', padding: 0, cursor: 'pointer'}} onClick={() => {/* TODO: Implement action */}}>
+                  <button className="nav-link" style={{width: '100%', textAlign: 'left', background: 'none', border: 'none', padding: 0, cursor: 'pointer'}} onClick={() =>  navigate('/dashboard')}>
                     <span role="img" aria-label="quote" style={{marginRight: '8px'}}>🏠</span>Home
                   </button>
                 </li>
                 <li className="dashboard-nav-item">
-                  <button className="nav-link" style={{width: '100%', textAlign: 'left', background: 'none', border: 'none', padding: 0, cursor: 'pointer'}} onClick={openRFQModal}>
+                  <button className="nav-link" style={{width: '100%', textAlign: 'left', background: 'none', border: 'none', padding: 0, cursor: 'pointer'}} onClick={() => navigate('/dashboard/request-quotation')}>
                     <span role="img" aria-label="quote" style={{marginRight: '8px'}}>📝</span>Request Quotation
                   </button>
                 </li>
@@ -115,17 +117,19 @@ export default function DashboardLayout() {
       </aside>
 
       <main className="dashboard-main">
-        <header className="dashboard-header">
-          <div>
-            <h1 className="welcome">Welcome back, <span>Client</span></h1>
-            <p className="lead">Here's your project overview and activity</p>
-          </div>
+        {!hideWelcome && (
+          <header className="dashboard-header">
+            <div>
+              <h1 className="welcome">Welcome back, <span>Client</span></h1>
+              <p className="lead">Here's your project overview and activity</p>
+            </div>
 
-          <div className="header-actions">
-            {/* <button className="btn primary">+ New Project</button> */}
-            {/* <button className="btn secondary" onClick={() => { navigate('/dashboard/civil') }}>View Services</button> */}
-          </div>
-        </header>
+            <div className="header-actions">
+              {/* <button className="btn primary">+ New Project</button> */}
+              {/* <button className="btn secondary" onClick={() => { navigate('/dashboard/civil') }}>View Services</button> */}
+            </div>
+          </header>
+        )}
 
         <div className="dashboard-outlet">
           <Outlet />

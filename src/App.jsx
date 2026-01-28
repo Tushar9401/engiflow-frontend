@@ -7,6 +7,7 @@ import DashboardHome from './pages/DashboardHome'
 import DashboardServicesCivil from './pages/DashboardServicesCivil'
 import DashboardServicesStructural from './pages/DashboardServicesStructural'
 import RFQDetail from './pages/RFQDetail';
+import RequestRFQ from './pages/RequestRFQ';
 import ActiveRFQs from './pages/ActiveRFQs';
 import ActiveDeliverables from './pages/ActiveDeliverables';
 import DeliverableDetail from './pages/DeliverableDetail';
@@ -26,6 +27,7 @@ function App() {
         <Route index element={<DashboardHome />} />
         <Route path="civil" element={<DashboardServicesCivil />} />
         <Route path="structural" element={<DashboardServicesStructural />} />
+        <Route path="request-quotation" element={<RequestRFQ />} />
       </Route>
 
   <Route path="/" element={<Login />} />
