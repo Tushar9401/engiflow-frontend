@@ -11,6 +11,8 @@ export default function RFQDetail() {
     status: 'Pending',
     title: 'Structural Design',
     client: 'Acme Corp',
+  service: 'Structural',
+  subservice: ['Structural Analysis', 'Beam & Column Design',"Strucutral"],
     date: 'January 1, 2026',
     end_date: 'January 1, 2026',
     budget: '$12,500',
@@ -279,7 +281,7 @@ export default function RFQDetail() {
               </button>
             </li>
             <li className="dashboard-nav-item">
-              <button className="nav-link" style={{width: '100%', textAlign: 'left', background: 'none', border: 'none', padding: 0, cursor: 'pointer'}}>
+              <button className="nav-link" onClick={()=>navigate('/dashboard/request-quotation')} style={{width: '100%', textAlign: 'left', background: 'none', border: 'none', padding: 0, cursor: 'pointer'}}>
                <span role="img" aria-label="clients" style={{marginRight: '8px'}}>📝</span>Request Quotation
               </button>
             </li>
@@ -387,29 +389,55 @@ export default function RFQDetail() {
           )}
         </div>
         <h1 style={{ fontSize: '2.6rem', fontWeight: 800, margin: '0 0 18px 0' }}>{rfq.title}</h1>
-        <div style={{ display: 'flex', gap: '16px', marginBottom: '24px', alignItems: 'center' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', gap: '16px', marginBottom: '24px', alignItems: 'center', flexWrap: 'wrap' }}>
         {panel !== 'subcontractor' && (
           <>
-            <div style={{ display: 'flex', gap: '16px', marginBottom: '24px', alignItems: 'center' }}>
-              <span style={{ background: '#f4f4ff', color: '#5b4fff', borderRadius: 20, padding: '7px 18px', fontWeight: 500, display: 'flex', alignItems: 'center', gap: 8 }}>
-                <span role="img" aria-label="client">👤</span> {rfq.client}
-              </span>
-
-              <span style={{ background: '#f4f4ff', color: '#5b4fff', borderRadius: 14, padding: '8px 12px', fontWeight: 500, display: 'flex', flexDirection: 'column', gap: 4 }}>
-                <span style={{ fontSize: '0.78rem', color: '#6b7280', fontWeight: 600, letterSpacing: 0.2 }}>Submitted Date</span>
-                <span style={{ fontSize: '0.98rem', color: '#5b4fff', display: 'flex', alignItems: 'center', gap: 8 }}>
-                  <span role="img" aria-label="submitted-date">📅</span>
-                  {rfq.date}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8, minWidth: 0 }}>
+              {/* First row: Client + Dates */}
+              <div style={{ display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap' }}>
+                <span style={{ background: '#f4f4ff', color: '#5b4fff', borderRadius: 20, padding: '7px 18px', fontWeight: 500, display: 'flex', alignItems: 'center', gap: 8, minWidth: 0 }}>
+                  <span role="img" aria-label="client">👤</span> {rfq.client}
                 </span>
-              </span>
 
-              <span style={{ background: '#fff7f0', color: '#b85b00', borderRadius: 14, padding: '8px 12px', fontWeight: 600, display: 'flex', flexDirection: 'column', gap: 4 }}>
-                <span style={{ fontSize: '0.78rem', color: '#9a7a60', fontWeight: 600, letterSpacing: 0.2 }}>End Date</span>
-                <span style={{ fontSize: '0.98rem', color: '#b85b00', display: 'flex', alignItems: 'center', gap: 8 }}>
-                  <span role="img" aria-label="end-date">⏳</span>
-                  {rfq.end_date}
+                <span style={{ background: '#f4f4ff', color: '#5b4fff', borderRadius: 14, padding: '8px 12px', fontWeight: 500, display: 'flex', flexDirection: 'column', gap: 4 }}>
+                  <span style={{ fontSize: '0.78rem', color: '#6b7280', fontWeight: 600, letterSpacing: 0.2 }}>Submitted Date</span>
+                  <span style={{ fontSize: '0.98rem', color: '#5b4fff', display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <span role="img" aria-label="submitted-date">📅</span>
+                    {rfq.date}
+                  </span>
                 </span>
-              </span>
+
+                <span style={{ background: '#fff7f0', color: '#b85b00', borderRadius: 14, padding: '8px 12px', fontWeight: 600, display: 'flex', flexDirection: 'column', gap: 4 }}>
+                  <span style={{ fontSize: '0.78rem', color: '#9a7a60', fontWeight: 600, letterSpacing: 0.2 }}>End Date</span>
+                  <span style={{ fontSize: '0.98rem', color: '#b85b00', display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <span role="img" aria-label="end-date">⏳</span>
+                    {rfq.end_date}
+                  </span>
+                </span>
+              </div>
+
+              {/* Second row: service + subservices */}
+              <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
+                <span style={{ background: '#eef2ff', color: '#3b3dff', borderRadius: 999, padding: '6px 12px', fontWeight: 700, fontSize: '0.95rem', display: 'inline-flex', alignItems: 'center', gap: 8 }}>
+                  🧭 {rfq.service}
+                </span>
+
+                {rfq.subservice && (
+                  Array.isArray(rfq.subservice) ? (
+                    <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
+                      {rfq.subservice.slice(0,3).map((s, idx) => (
+                        <span key={idx} style={{ background: '#f8fafc', color: '#374151', borderRadius: 999, padding: '6px 12px', fontWeight: 600, fontSize: '0.92rem', display: 'inline-flex', alignItems: 'center', gap: 8 }}>
+                          🔹 {s}
+                        </span>
+                      ))}
+                    </div>
+                  ) : (
+                    <span style={{ background: '#f8fafc', color: '#374151', borderRadius: 999, padding: '6px 12px', fontWeight: 600, fontSize: '0.92rem', display: 'inline-flex', alignItems: 'center', gap: 8 }}>
+                      🔹 {rfq.subservice}
+                    </span>
+                  )
+                )}
+              </div>
             </div>
           </>
         )}
