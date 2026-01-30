@@ -4,10 +4,10 @@ import './AdminDashboard.css';
 import './Dashboard.css';
 
 const clients = [
-  { id: 'CL-001', name: 'Acme Corp', contact: 'acme@example.com', phone: '+1 (415) 555-0182', status: 'Active' },
-  { id: 'CL-002', name: 'Global Build', contact: 'globalbuild@example.com', phone: '+1 (212) 555-0191', status: 'Active' },
-  { id: 'CL-003', name: 'Tech Infra', contact: 'techinfra@example.com', phone: '+1 (206) 555-0148', status: 'Prospect' },
-  { id: 'CL-004', name: 'Vertex Design', contact: 'vertex@example.com', phone: '+1 (312) 555-0174', status: 'On Hold' },
+  { id: 'CL-001', name: 'Acme Corp', contact: 'acme@example.com', phone: '+1 (415) 555-0182'},
+  { id: 'CL-002', name: 'Global Build', contact: 'globalbuild@example.com', phone: '+1 (212) 555-0191' },
+  { id: 'CL-003', name: 'Tech Infra', contact: 'techinfra@example.com', phone: '+1 (206) 555-0148' },
+  { id: 'CL-004', name: 'Vertex Design', contact: 'vertex@example.com', phone: '+1 (312) 555-0174' },
 ];
 
 export default function Clients() {
@@ -89,7 +89,6 @@ export default function Clients() {
                 <th>Client</th>
                 <th>Email</th>
                 <th>Phone</th>
-                <th>Status</th>
               </tr>
             </thead>
             <tbody>
@@ -99,7 +98,6 @@ export default function Clients() {
                   <td><b>{client.name}</b></td>
                   <td>{client.contact}</td>
                   <td>{client.phone}</td>
-                  <td>{client.status}</td>
                 </tr>
               ))}
             </tbody>

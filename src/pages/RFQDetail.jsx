@@ -11,20 +11,32 @@ export default function RFQDetail() {
     status: 'Pending',
     title: 'Structural Design',
     client: 'Acme Corp',
-    service: 'Structural',
-    subservice: [
-    "Structural Analysis",
-    "Beam & Column Design",
-    "Foundation Design",
-    "Load Calculation",
-    "Seismic Analysis",
-    "Structural Detailing",
-    "Reinforcement Planning",
-    "Structural Audit",
-    "Retrofitting Design",
-    "Steel Structure Design",
-    "Concrete Mix Design"
-  ],
+    service: ['Structural','Civil','Mining'],
+    subserviceByService: {
+      Structural: [
+        "Structural Analysis",
+        "Beam & Column Design",
+        "Foundation Design",
+        "Load Calculation",
+        "Seismic Analysis",
+        "Structural Detailing",
+        "Reinforcement Planning",
+        "Structural Audit",
+        "Retrofitting Design",
+        "Steel Structure Design",
+        "Concrete Mix Design"
+      ],
+      Civil: [
+        "Drainage Design",
+        "Roadway Layout",
+        "Pavement Design"
+      ],
+      Mining: [
+        "Mine Planning",
+        "Ventilation Study",
+        "Slope Stability"
+      ]
+    },
     date: 'January 1, 2026',
     end_date: 'January 1, 2026',
     budget: '$12,500',
@@ -443,27 +455,46 @@ export default function RFQDetail() {
                 </span>
               </div>
 
-              {/* Second row: service + subservices */}
-              <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
-                <span style={{ background: '#eef2ff', color: '#3b3dff', borderRadius: 999, padding: '6px 12px', fontWeight: 700, fontSize: '0.95rem', display: 'inline-flex', alignItems: 'center', gap: 8 }}>
-                  🧭 {rfq.service}
-                </span>
-
-                {rfq.subservice && (
-                  Array.isArray(rfq.subservice) ? (
-                    <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
-                      {rfq.subservice.map((s, idx) => (
-                        <span key={idx} style={{ background: '#f8fafc', color: '#374151', borderRadius: 999, padding: '6px 12px', fontWeight: 600, fontSize: '0.92rem', display: 'inline-flex', alignItems: 'center', gap: 8 }}>
-                          🔹 {s}
-                        </span>
-                      ))}
-                    </div>
+              {/* Services + subservices grouped */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
+                  <span style={{ fontSize: '0.85rem', color: '#6b7280', fontWeight: 700, marginRight: 4 }}>Services</span>
+                  {Array.isArray(rfq.service) ? (
+                    rfq.service.map((svc, idx) => (
+                      <span key={idx} style={{ background: '#eef2ff', color: '#3b3dff', borderRadius: 999, padding: '6px 12px', fontWeight: 700, fontSize: '0.95rem', display: 'inline-flex', alignItems: 'center', gap: 8 }}>
+                        🧭 {svc}
+                      </span>
+                    ))
                   ) : (
-                    <span style={{ background: '#f8fafc', color: '#374151', borderRadius: 999, padding: '6px 12px', fontWeight: 600, fontSize: '0.92rem', display: 'inline-flex', alignItems: 'center', gap: 8 }}>
-                      🔹 {rfq.subservice}
+                    <span style={{ background: '#eef2ff', color: '#3b3dff', borderRadius: 999, padding: '6px 12px', fontWeight: 700, fontSize: '0.95rem', display: 'inline-flex', alignItems: 'center', gap: 8 }}>
+                      🧭 {rfq.service}
                     </span>
-                  )
-                )}
+                  )}
+                </div>
+
+                {(Array.isArray(rfq.service) ? rfq.service : [rfq.service]).map((svc, svcIdx) => {
+                  const subservices = (rfq.subserviceByService && rfq.subserviceByService[svc])
+                    ? rfq.subserviceByService[svc]
+                    : (svcIdx === 0 ? rfq.subservice : []);
+
+                  if (!subservices || subservices.length === 0) return null;
+
+                  return (
+                    <div key={svc} style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                      <div style={{ fontSize: '0.85rem', color: '#6b7280', fontWeight: 700, display: 'flex', alignItems: 'center', gap: 6 }}>
+                        <span role="img" aria-label="service">🧭</span>
+                        {svc} Subservices
+                      </div>
+                      <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
+                        {subservices.map((s, idx) => (
+                          <span key={`${svc}-${idx}`} style={{ background: '#f8fafc', color: '#374151', borderRadius: 999, padding: '6px 12px', fontWeight: 600, fontSize: '0.92rem', display: 'inline-flex', alignItems: 'center', gap: 8 }}>
+                            🔹 {s}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             </div>
           </>
