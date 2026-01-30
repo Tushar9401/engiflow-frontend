@@ -1,4 +1,5 @@
 import AdminDashboard from './pages/AdminDashboard';
+import Clients from './pages/Clients';
 import ProjectsList from './pages/ProjectsList';
 import Signup from './pages/Signup'
 import Login from './pages/Login'
@@ -32,6 +33,7 @@ function App() {
 
   <Route path="/" element={<Login />} />
   <Route path="/admin" element={<AdminDashboard />} />
+  <Route path="/admin/clients" element={<Clients />} />
   <Route path="/admin/projects" element={<ProjectsList />} />
   <Route path="/admin/rfqs" element={<ActiveRFQs />} />
   <Route path="/subcontractor/active-deliverables" element={<ActiveDeliverables />} />

@@ -11,8 +11,20 @@ export default function RFQDetail() {
     status: 'Pending',
     title: 'Structural Design',
     client: 'Acme Corp',
-  service: 'Structural',
-  subservice: ['Structural Analysis', 'Beam & Column Design',"Strucutral"],
+    service: 'Structural',
+    subservice: [
+    "Structural Analysis",
+    "Beam & Column Design",
+    "Foundation Design",
+    "Load Calculation",
+    "Seismic Analysis",
+    "Structural Detailing",
+    "Reinforcement Planning",
+    "Structural Audit",
+    "Retrofitting Design",
+    "Steel Structure Design",
+    "Concrete Mix Design"
+  ],
     date: 'January 1, 2026',
     end_date: 'January 1, 2026',
     budget: '$12,500',
@@ -252,7 +264,7 @@ export default function RFQDetail() {
               </button>
             </li>
             <li className="dashboard-nav-item">
-              <button className="nav-link" style={{width: '100%', textAlign: 'left', background: 'none', border: 'none', padding: 0, cursor: 'pointer'}}>
+              <button className="nav-link" onClick={() => navigate('/admin/clients')} style={{width: '100%', textAlign: 'left', background: 'none', border: 'none', padding: 0, cursor: 'pointer'}}>
                <span role="img" aria-label="clients" style={{marginRight: '8px'}}>👤</span>Clients
               </button>
             </li>
@@ -440,7 +452,7 @@ export default function RFQDetail() {
                 {rfq.subservice && (
                   Array.isArray(rfq.subservice) ? (
                     <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
-                      {rfq.subservice.slice(0,3).map((s, idx) => (
+                      {rfq.subservice.map((s, idx) => (
                         <span key={idx} style={{ background: '#f8fafc', color: '#374151', borderRadius: 999, padding: '6px 12px', fontWeight: 600, fontSize: '0.92rem', display: 'inline-flex', alignItems: 'center', gap: 8 }}>
                           🔹 {s}
                         </span>
